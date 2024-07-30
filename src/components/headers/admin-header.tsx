@@ -47,29 +47,29 @@ export default function Header() {
         transition={{
           duration: 0.2,
         }}
-        className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b backdrop-blur-lg"
+        className={`bg-primary sticky top-0 z-30 flex h-14 items-center gap-4 `}
       >
-        <div className="flex items-center justify-between w-full lg:mx-32 mx-6">
+        <div className="flex items-center justify-between w-full lg:mx-32 mx-6 text-white">
           <Link href={"/"} className="text-base text-balance font-bold">
             Karya Mekar
           </Link>
           <nav className="hidden gap-x-6 items-center lg:flex">
-            <Link href={"/"} className="text-sm text-balance">
+            <Link href={"/#home"} className="text-sm text-balance">
               Beranda
             </Link>
-            <Link href={"/#about"} className="text-sm text-balance">
+            <Link href={"/#profil"} className="text-sm text-balance">
               Profil
             </Link>
-            <Link href={"/#work"} className="text-sm text-balance">
+            <Link href={"/#galeri"} className="text-sm text-balance">
               Galeri
             </Link>
-            <Link href={"/#skills"} className="text-sm text-balance">
+            <Link href={"/#umkm"} className="text-sm text-balance">
               UMKM
             </Link>
-            <Link href={"/#projects"} className="text-sm text-balance">
+            <Link href={"/#kegiatan"} className="text-sm text-balance">
               Kegiatan
             </Link>
-            <Link href={"/#blog"} className="text-sm text-balance">
+            <Link href={"/#artikel"} className="text-sm text-balance">
               Artikel
             </Link>
             <Link href={"/Kontak"} className="text-sm text-balance">
@@ -79,7 +79,7 @@ export default function Header() {
           <Sheet>
             <SheetTrigger asChild>
               <Button size="icon" variant="outline" className="sm:hidden">
-                <AlignRight className="h-4 w-4" />
+                <AlignRight className="h-4 w-4 text-primary" />
                 <span className="sr-only">Toggle Menu</span>
               </Button>
             </SheetTrigger>
@@ -88,7 +88,7 @@ export default function Header() {
                 <Link href={"/"} className="text-sm text-balance">
                   Beranda
                 </Link>
-                <Link href={"/#about"} className="text-sm text-balance">
+                <Link href={"/#profil"} className="text-sm text-balance">
                   Profil
                 </Link>
                 <Link href={"/#work"} className="text-sm text-balance">
@@ -100,7 +100,7 @@ export default function Header() {
                 <Link href={"/#projects"} className="text-sm text-balance">
                   Kegiatan
                 </Link>
-                <Link href={"/#blog"} className="text-sm text-balance">
+                <Link href={"/#artikel"} className="text-sm text-balance">
                   Artikel
                 </Link>
                 <Link href={"/Kontak"} className="text-sm text-balance">
