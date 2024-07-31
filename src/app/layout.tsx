@@ -3,6 +3,8 @@ import "./globals.css";
 import { Inter as FontSans } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { ThemeProvider } from "@/components/theme-provider";
+import { Toaster } from "@/components/ui/sonner";
+import { SessionProvider } from "next-auth/react";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -28,14 +30,17 @@ export default function RootLayout({
         )}
         style={{ scrollBehavior: "smooth" }}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange={false}
-        >
-          {children}
-        </ThemeProvider>
+        <SessionProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem
+            disableTransitionOnChange={false}
+          >
+            {children}
+            <Toaster />
+          </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   );
