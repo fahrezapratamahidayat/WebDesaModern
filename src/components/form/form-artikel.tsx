@@ -93,7 +93,7 @@ export function ArticleDesaForm() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="">
+        <Button className="text-white font-medium">
           <Plus className="mr-2 h-4 w-4 text-white" />
           Artikel Desa
         </Button>

@@ -47,64 +47,37 @@ import React, { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { ArtikelDesa } from "@/types/type";
-import { ArticleDesaForm } from "../form/form-artikel";
+import { UMKM } from "@prisma/client";
+import { UMKMForm } from "../form/form-umkm";
 
-export const columns: ColumnDef<ArtikelDesa>[] = [
+export const columns: ColumnDef<UMKM>[] = [
   {
-    accessorKey: "judul",
-    header: ({ column }) => <div className="">Judul</div>,
+    accessorKey: "nama",
+    header: ({ column }) => <div className="">Nama UMKM</div>,
     cell: ({ row }) => {
-      return <div className="font-medium">{row.getValue("judul")}</div>;
+      return <div className="font-medium">{row.getValue("nama")}</div>;
     },
   },
   {
-    accessorKey: "kategori",
-    header: ({ column }) => <div className="">Kategori</div>,
+    accessorKey: "jenisUsaha",
+    header: ({ column }) => <div className="">Jenis Usaha</div>,
     cell: ({ row }) => {
-      return <Badge variant="outline">{row.getValue("kategori")}</Badge>;
+      return <Badge variant="outline">{row.getValue("jenisUsaha")}</Badge>;
     },
   },
   {
-    accessorKey: "tanggal",
-    header: ({ column, table }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => {
-            const isSortedAsc = column.getIsSorted() === "asc";
-            table.setSorting([{ id: column.id, desc: isSortedAsc }]);
-          }}
-        >
-          Tanggal
-          <ArrowUpDown
-            className={`ml-2 w-4 h-4 ${
-              column.getIsSorted()
-                ? column.getIsSorted() === "asc"
-                  ? "rotate-180"
-                  : ""
-                : ""
-            }`}
-          />
-        </Button>
-      );
-    },
+    accessorKey: "produkUtama",
+    header: () => <div className="">Produk Utama</div>,
     cell: ({ row }) => {
-      const tanggal = new Date(row.getValue("tanggal"));
-      return (
-        <div className="p-4 align-middle [&:has([role=checkbox])]:pr-0 hidden sm:table-cell">
-          {tanggal.toLocaleDateString("id-ID")}
-        </div>
-      );
+      return <div>{row.getValue("produkUtama")}</div>;
     },
   },
   {
-    accessorKey: "penulis",
-    header: () => <div className="hidden sm:table-cell">Penulis</div>,
+    accessorKey: "alamat",
+    header: () => <div className="hidden sm:table-cell">Alamat</div>,
     cell: ({ row }) => {
-      const penulis = row.getValue("penulis") as { nama: string };
       return (
-        <div className="hidden font-medium sm:table-cell">{penulis.nama}</div>
+        <div className="hidden sm:table-cell">{row.getValue("alamat")}</div>
       );
     },
   },
@@ -113,8 +86,7 @@ export const columns: ColumnDef<ArtikelDesa>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const artikel = row.original;
-      const artikelId = artikel.id;
+      const umkm = row.original;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -131,11 +103,11 @@ export const columns: ColumnDef<ArtikelDesa>[] = [
             </DropdownMenuItem>
             <DropdownMenuItem>
               <Edit2 className="mr-2 w-4 h-4" />
-              Edit artikel
+              Edit UMKM
             </DropdownMenuItem>
             <DropdownMenuItem>
               <Trash2 className="mr-2 w-4 h-4" />
-              Hapus artikel
+              Hapus UMKM
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -149,19 +121,14 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
-export default function TableArtikel<TData extends ArtikelDesa, TValue>({
+export default function TableUMKM<TData extends UMKM, TValue>({
   data,
   columns,
 }: DataTableProps<TData, TValue>) {
-  const [artikelId, setArtikelId] = useState<number>(0);
-  const [selectedArtikel, setSelectedArtikel] = useState({} as ArtikelDesa);
-
-  const { toast } = useToast();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
-  const [statusFilter, setStatusFilter] = useState("");
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
@@ -189,20 +156,17 @@ export default function TableArtikel<TData extends ArtikelDesa, TValue>({
     <>
       <Card>
         <CardHeader>
-          <CardTitle>Artikel Desa</CardTitle>
+          <CardTitle>UMKM Desa</CardTitle>
           <CardDescription>
-            Kelola Artikel Desa Anda dan lihat performa penjualan mereka.
+            Kelola UMKM Desa Anda dan lihat informasi tentang mereka.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-2 pb-4 lg:flex-row lg:items-center">
             <Input
-              placeholder="Cari Artikel disini ..."
+              placeholder="Cari UMKM disini ..."
               value={(table.getState().globalFilter as string) ?? ""}
-              onChange={(event) => {
-                const value = event.target.value;
-                table.setGlobalFilter(value);
-              }}
+              onChange={(event) => table.setGlobalFilter(event.target.value)}
               className="max-w-sm"
             />
             <DropdownMenu>
@@ -231,61 +195,29 @@ export default function TableArtikel<TData extends ArtikelDesa, TValue>({
                   })}
               </DropdownMenuContent>
             </DropdownMenu>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="">
-                  Filter Status <ChevronDown className="ml-2 w-4 h-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem onSelect={() => setStatusFilter("")}>
-                  <DropdownMenuCheckboxItem
-                    onCheckedChange={() => setStatusFilter("")}
-                    checked={statusFilter === ""}
-                  >
-                    Semua
-                  </DropdownMenuCheckboxItem>
-                </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => setStatusFilter("Tersedia")}>
-                  <DropdownMenuCheckboxItem
-                    onCheckedChange={() => setStatusFilter("Tersedia")}
-                    checked={statusFilter === "Tersedia"}
-                  >
-                    Tersedia
-                  </DropdownMenuCheckboxItem>
-                </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => setStatusFilter("Dipesan")}>
-                  <DropdownMenuCheckboxItem
-                    onCheckedChange={() => setStatusFilter("Dipesan")}
-                    checked={statusFilter === "Dipesan"}
-                  >
-                    Dipesan
-                  </DropdownMenuCheckboxItem>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
             <div className="flex items-center">
-              <ArticleDesaForm />
+              <UMKMForm />
             </div>
           </div>
           <Table>
-            {" "}
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
+            <TableHead>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead key={header.id}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    );
+                  })}
+                </TableRow>
+              ))}
+            </TableHead>
             <TableBody>
               {table.getRowModel().rows?.length ? (
                 table.getRowModel().rows.map((row) => (
@@ -294,7 +226,7 @@ export default function TableArtikel<TData extends ArtikelDesa, TValue>({
                     data-state={row.getIsSelected() && "selected"}
                   >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell className="" key={cell.id}>
+                      <TableCell key={cell.id}>
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()
@@ -307,7 +239,7 @@ export default function TableArtikel<TData extends ArtikelDesa, TValue>({
                 <TableRow>
                   <TableCell
                     colSpan={columns.length}
-                    className="h-96 text-center"
+                    className="h-24 text-center"
                   >
                     Tidak ada data
                   </TableCell>
@@ -316,21 +248,11 @@ export default function TableArtikel<TData extends ArtikelDesa, TValue>({
             </TableBody>
           </Table>
         </CardContent>
-        {/* <CardFooter>
-          <div className="text-xs text-muted-foreground">
-            Menampilkan{" "}
-            <strong>
-              {data.currentPage * data.limit - data.limit + 1}-
-              {Math.min(data.currentPage * data.limit, data.totalRooms)}
-            </strong>{" "}
-            dari <strong>{data.totalRooms}</strong> kamar
-          </div>
-        </CardFooter> */}
       </Card>
       <div className="flex justify-end items-center py-4 space-x-2">
         <div className="flex-1 text-sm text-muted-foreground">
-          Menampilkan
-          <strong> {table.getFilteredRowModel().rows.length}</strong> artikel
+          Menampilkan <strong>{table.getFilteredRowModel().rows.length}</strong>{" "}
+          UMKM
         </div>
         <div className="space-x-2">
           <Button

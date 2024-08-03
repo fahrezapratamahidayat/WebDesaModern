@@ -1,16 +1,8 @@
-"use client";
+"use client";;
 import { ArrowRight } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
-import {
-  motion,
-  useScroll,
-  useMotionValue,
-  AnimatePresence,
-  useMotionValueEvent,
-  useAnimation,
-} from "framer-motion";
+import { useState } from "react";
+import { motion, useScroll, useMotionValueEvent, useAnimation } from "framer-motion";
 export default function UmkmSection() {
   const { scrollYProgress, scrollY } = useScroll();
   const controls = useAnimation();
@@ -39,7 +31,7 @@ export default function UmkmSection() {
         UMKM Desa Karyamekar
       </h1>
       <div className="flex lg:flex-row flex-col justify-between w-full gap-6 overflow-visible ">
-        <div className="w-full lg:w-1/2">
+        <div className="w-full lg:w-1>/2">
           <div
             className={`flex flex-col gap-y-6 ${
               isSticky ? "sticky top-32 z-30 transition" : ""

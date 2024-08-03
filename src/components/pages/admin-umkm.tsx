@@ -1,26 +1,23 @@
 "use client";
-import axios from "axios";
+    import axios from "axios";
 import AdminLayout from "../layouts/admin-layout";
-import TableArtikel, { columns } from "../tables/table-artikel";
-import useSWR, { useSWRConfig } from "swr";
-import { useCurrentRole } from "@/hooks/use-current-role";
+import TableUMKM, { columns } from "../tables/table-umkm";
+import useSWR from "swr";
 import SidebarSkeleton from "../skeletons/sidebar";
 import { Card, CardContent } from "../ui/card";
 import TableArtikelSkeleton from "../skeletons/table";
 
-export default function AdminArtikelPage() {
-  const { mutate } = useSWRConfig();
-  const role = useCurrentRole();
 
+export default function UMKMPage() {
   const fetcher = async () => {
     const params = { statuskamar: "reserved" };
-    const response = await axios.get("/api/artikel", {
+    const response = await axios.get("/api/umkm", {
       params,
     });
     return response.data;
   };
 
-  const { data, error, isLoading } = useSWR("/rooms", fetcher);
+  const { data, error, isLoading } = useSWR("/umkm", fetcher);
   if (error) return <div>failed to load</div>;
   if (isLoading)
     return (
@@ -37,7 +34,7 @@ export default function AdminArtikelPage() {
     );
   return (
     <AdminLayout>
-      <TableArtikel data={data} columns={columns} />
+      <TableUMKM data={data} columns={columns} />
     </AdminLayout>
   );
 }

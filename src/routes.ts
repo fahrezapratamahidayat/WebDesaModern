@@ -20,7 +20,11 @@ export const authRoutes: string[] = [
     "/auth/reset",
     "/auth/new-password"
 ];
-
+export const routePermissions = {
+    '/admin': ['admin'],
+    '/manager': ['admin', 'manager'],
+    '/user': ['admin', 'manager', 'user'],
+};
 /**
  * The prefix for API authentication routes
  * Routes that start with this prefix are used for API authentication purposes

@@ -19,6 +19,9 @@ export const {
                 token.idp = "credentials";
                 token.createdAt = user.created_At;
             }
+            if (user) {
+                token.role = user.role;
+            }
             return token;
         },
         async session({ session, token }: any) {

@@ -41,7 +41,7 @@ export default function KontakDesaSection() {
               <Input type="email" placeholder="Alamat Email" />
               <Input placeholder="Subjek" />
               <Textarea placeholder="Pesan Anda" className="h-32" />
-              <Button className="w-full">
+              <Button className="w-full text-white">
                 Kirim Pesan
                 <Send className="w-4 h-4 ml-2" />
               </Button>

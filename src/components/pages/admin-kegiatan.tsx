@@ -1,26 +1,24 @@
 "use client";
 import axios from "axios";
 import AdminLayout from "../layouts/admin-layout";
-import TableArtikel, { columns } from "../tables/table-artikel";
 import useSWR, { useSWRConfig } from "swr";
 import { useCurrentRole } from "@/hooks/use-current-role";
 import SidebarSkeleton from "../skeletons/sidebar";
 import { Card, CardContent } from "../ui/card";
 import TableArtikelSkeleton from "../skeletons/table";
+import TableKegiatanDesa, { columns } from "../tables/table-kegiatan";
 
-export default function AdminArtikelPage() {
-  const { mutate } = useSWRConfig();
-  const role = useCurrentRole();
+export default function AdminKegiatanPage() {
 
   const fetcher = async () => {
     const params = { statuskamar: "reserved" };
-    const response = await axios.get("/api/artikel", {
+    const response = await axios.get("/api/kegiatan", {
       params,
     });
     return response.data;
   };
 
-  const { data, error, isLoading } = useSWR("/rooms", fetcher);
+  const { data, error, isLoading } = useSWR("/kegiatan", fetcher);
   if (error) return <div>failed to load</div>;
   if (isLoading)
     return (
@@ -37,7 +35,7 @@ export default function AdminArtikelPage() {
     );
   return (
     <AdminLayout>
-      <TableArtikel data={data} columns={columns} />
+      <TableKegiatanDesa data={data} columns={columns} />
     </AdminLayout>
   );
 }
