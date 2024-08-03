@@ -1,4 +1,4 @@
-import { createArtikel, getArtikels } from "@/services/services";
+import { createArtikel, getArtikels } from "@/services/artikel";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest, res: NextResponse) {
