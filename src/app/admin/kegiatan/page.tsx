@@ -1,10 +1,5 @@
-import { KegiatanDesaForm } from "@/components/form/form-kegiatan";
-import AdminLayout from "@/components/layouts/admin-layout";
+import AdminKegiatanPage from "@/components/pages/admin-kegiatan";
 
 export default function PageKegiatan() {
-  return (
-    <AdminLayout>
-      <KegiatanDesaForm />
-    </AdminLayout>
-  );
+  return <AdminKegiatanPage />
 }
