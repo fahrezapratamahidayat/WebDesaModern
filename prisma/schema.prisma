@@ -4,6 +4,7 @@
 generator client {
   provider = "prisma-client-js"
 }
+
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
@@ -43,6 +44,7 @@ model ArticleDesa {
   penulisId Int
   ringkasan String   @db.Text
 }
+
 model KegiatanDesa {
   id        Int           @id @default(autoincrement())
   createdAt DateTime      @default(now())
@@ -56,4 +58,29 @@ model KegiatanDesa {
   postedBy  String        @db.VarChar(255)
   penulis   User          @relation(fields: [penulisId], references: [id])
   penulisId Int
+}
+
+model UMKM {
+  id           String       @id @default(uuid())
+  nama         String
+  deskripsi    String
+  jenisUsaha   String
+  produkUtama  String
+  alamat       String
+  telepon      String
+  email        String?
+  website      String?
+  lokasiGambar String
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  GambarUMKM   GambarUMKM[]
+}
+
+model GambarUMKM {
+  id         String   @id @default(uuid())
+  umkm       UMKM     @relation(fields: [umkmId], references: [id])
+  umkmId     String
+  url        String
+  keterangan String?
+  createdAt  DateTime @default(now())
 }
