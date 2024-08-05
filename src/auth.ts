@@ -12,7 +12,7 @@ export const {
     callbacks: {
         async jwt({ token, account, user, profile }: any) {
             if (account?.provider === "credentials") {
-                token.id = user.id;
+                token.id = Number(user.id);
                 token.email = user.email;
                 token.nama = user.nama;
                 token.role = user.role
