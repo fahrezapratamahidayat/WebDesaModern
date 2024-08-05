@@ -61,19 +61,19 @@ model KegiatanDesa {
 }
 
 model UMKM {
-  id           String       @id @default(uuid())
-  nama         String
-  deskripsi    String
-  jenisUsaha   String
-  produkUtama  String
-  alamat       String
-  telepon      String
-  email        String?
-  website      String?
-  lokasiGambar String
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  GambarUMKM   GambarUMKM[]
+  id          String       @id @default(uuid())
+  nama        String
+  deskripsi   String
+  jenisUsaha  String
+  produkUtama String
+  keunggulan  String
+  alamat      String
+  telepon     String
+  email       String?
+  website     String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  GambarUMKM  GambarUMKM[]
 }
 
 model GambarUMKM {
@@ -83,4 +83,10 @@ model GambarUMKM {
   url        String
   keterangan String?
   createdAt  DateTime @default(now())
+}
+
+model GambarGaleri {
+  id         String @id @default(uuid())
+  url        String
+  keterangan String
 }
