@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -9,15 +9,14 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { ScrollArea } from "@/components/ui/scroll-area";
 
 import {
-  HomeIcon,
   FileTextIcon,
   CalendarIcon,
   HamburgerMenuIcon,
 } from "@radix-ui/react-icons";
-import { ArrowLeft, ArrowRight, LogOut, Package2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, LogOutIcon, Package2 } from "lucide-react";
+import { signOut } from "next-auth/react";
 
 export default function SidebarAdmin() {
   const pathname = usePathname();
@@ -72,6 +71,24 @@ export default function SidebarAdmin() {
             </Tooltip>
           </TooltipProvider>
         ))}
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger>
+              {" "}
+              <Button
+                onClick={() => signOut()}
+                variant={"ghost"}
+                className={`w-full justify-start text-white text-sm ${isSidebarOpen ? "" : ""}`}
+              >
+                <LogOutIcon className="h-5 w-5 text-white" />
+                {isSidebarOpen && <span className="ml-2">Log out</span>}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>Log out</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </nav>
     </aside>
   );

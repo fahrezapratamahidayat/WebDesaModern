@@ -16,7 +16,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -25,10 +24,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { FileUploader } from "../ui/file-uploader";
-import { UploadedFilesCard } from "../card/uploaded-files-card";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const formSchema = z.object({
   nama: z.string().min(2, {
@@ -42,6 +47,9 @@ const formSchema = z.object({
   }),
   produkUtama: z.string().min(2, {
     message: "Produk utama harus memiliki minimal 2 karakter.",
+  }),
+  keunggulan: z.array(z.string()).min(1, {
+    message: "Masukkan minimal satu keunggulan.",
   }),
   alamat: z.string().min(5, {
     message: "Alamat harus memiliki minimal 5 karakter.",
@@ -63,7 +71,7 @@ const formSchema = z.object({
     })
     .optional()
     .or(z.literal("")),
-  images: z.array(z.instanceof(File)),
+  gambar: z.array(z.instanceof(File)),
 });
 
 export function UMKMForm() {
@@ -81,35 +89,47 @@ export function UMKMForm() {
       telepon: "",
       email: "",
       website: "",
-      images: [],
+      gambar: [],
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setLoading(true);
-    try {
-      const formData = new FormData();
-      Object.keys(values).forEach((key) => {
-        if (key !== "images") {
-          formData.append(key, values[key as keyof typeof values] as string);
-        }
-      });
-      values.images.forEach((file, index) => {
-        formData.append(`images`, file);
-      });
+    const formData = new FormData();
 
-      await axios.post("/api/umkm", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      setLoading(false);
-      form.reset();
-      setFiles([]);
-      toast.success("UMKM berhasil ditambahkan");
-      setOpen(false);
-    } catch (error) {
-      setLoading(false);
-      console.error("Error:", error);
-      toast.error("Gagal menambahkan UMKM");
+    const keunggulanString = values.keunggulan.join(",");
+    formData.append(
+      "umkmData",
+      JSON.stringify({
+        nama: values.nama,
+        deskripsi: values.deskripsi,
+        jenisUsaha: values.jenisUsaha,
+        produkUtama: values.produkUtama,
+        keunggulan: keunggulanString,
+        alamat: values.alamat,
+        telepon: values.telepon,
+        email: values.email,
+        website: values.website,
+      })
+    );
+
+    values.gambar.forEach((file, index) => {
+      formData.append("gambar", file);
+    });
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/api/umkm",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      toast.success("berhasil dibuat");
+    } catch (error: AxiosError | any) {
+      toast("gagal dibuat");
     }
   }
 
@@ -121,7 +141,7 @@ export function UMKMForm() {
           Tambah UMKM
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[1200px] max-w-md">
+      <DialogContent className="sm:max-w-[1200px] h-[600px]">
         <DialogHeader>
           <DialogTitle>Tambah UMKM Baru</DialogTitle>
           <DialogDescription>
@@ -129,9 +149,9 @@ export function UMKMForm() {
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <ScrollArea>
+          <ScrollArea className="pr-3">
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-              <div className="grid lg:grid-cols-3 grid-cols-1 gap-4">
+              <div className="grid lg:grid-cols-3 grid-cols-1 gap-4 mx-2">
                 <div className="space-y-4">
                   <FormField
                     control={form.control}
@@ -151,13 +171,27 @@ export function UMKMForm() {
                     name="jenisUsaha"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Jenis Usaha</FormLabel>
-                        <FormControl>
-                          <Input
-                            placeholder="Masukkan jenis usaha"
-                            {...field}
-                          />
-                        </FormControl>
+                        <FormLabel>Email</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue
+                                placeholder="Masukkan jenis usaha"
+                                className="text-muted-foreground placeholder:text-muted-foreground"
+                              />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            <SelectItem value="makanan">Makanan</SelectItem>
+                            <SelectItem value="minuman">Minuman</SelectItem>
+                            <SelectItem value="kerajinan">Kerajinan</SelectItem>
+                            <SelectItem value="jasa">Jasa</SelectItem>
+                            <SelectItem value="teknologi">Teknologi</SelectItem>
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -194,6 +228,8 @@ export function UMKMForm() {
                       </FormItem>
                     )}
                   />
+                </div>
+                <div className="space-y-4">
                   <FormField
                     control={form.control}
                     name="telepon"
@@ -210,19 +246,14 @@ export function UMKMForm() {
                       </FormItem>
                     )}
                   />
-                </div>
-                <div className="space-y-4">
                   <FormField
                     control={form.control}
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel>Email (opsional)</FormLabel>
                         <FormControl>
-                          <Input
-                            placeholder="Masukkan email (opsional)"
-                            {...field}
-                          />
+                          <Input placeholder="Masukkan email" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -233,17 +264,35 @@ export function UMKMForm() {
                     name="website"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Website</FormLabel>
+                        <FormLabel>Website (opsional)</FormLabel>
                         <FormControl>
-                          <Input
-                            placeholder="Masukkan website (opsional)"
+                          <Input placeholder="Masukkan website" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="keunggulan"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Keunggulan</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Masukkan keunggulan (pisahkan dengan koma)"
                             {...field}
+                            onChange={(e) =>
+                              field.onChange(e.target.value.split(","))
+                            }
                           />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
                   />
+                </div>
+                <div className="space-y-4">
                   <FormField
                     control={form.control}
                     name="deskripsi"
@@ -261,11 +310,9 @@ export function UMKMForm() {
                       </FormItem>
                     )}
                   />
-                </div>
-                <div className="space-y-4">
                   <FormField
                     control={form.control}
-                    name="images"
+                    name="gambar"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Gambar UMKM</FormLabel>
@@ -277,18 +324,11 @@ export function UMKMForm() {
                                 field.onChange(newFiles);
                                 setFiles(newFiles);
                               }}
-                              maxFiles={5}
+                              maxFiles={3}
                               maxSize={1024 * 1024 * 10}
                               accept={{ "image/*": [] }}
                               multiple={true}
                             />
-                            {/* <UploadedFilesCard
-                            uploadedFiles={files.map((file) => ({
-                              key: file.name,
-                              url: URL.createObjectURL(file),
-                              name: file.name,
-                            }))}
-                          /> */}
                           </div>
                         </FormControl>
                         <FormMessage />
@@ -298,12 +338,12 @@ export function UMKMForm() {
                 </div>
               </div>
               {loading ? (
-                <Button className="w-full" type="submit" disabled>
+                <Button className="w-full text-white" type="submit" disabled>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Loading
                 </Button>
               ) : (
-                <Button type="submit" className="w-full">
+                <Button type="submit" className="w-full text-white">
                   Tambah UMKM
                 </Button>
               )}

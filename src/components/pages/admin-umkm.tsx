@@ -10,14 +10,12 @@ import TableArtikelSkeleton from "../skeletons/table";
 
 export default function UMKMPage() {
   const fetcher = async () => {
-    const params = { statuskamar: "reserved" };
-    const response = await axios.get("/api/umkm", {
-      params,
-    });
-    return response.data;
+    const response = await axios.get("/api/umkm");
+    return response.data.data;
   };
 
   const { data, error, isLoading } = useSWR("/umkm", fetcher);
+  console.log(data)
   if (error) return <div>failed to load</div>;
   if (isLoading)
     return (

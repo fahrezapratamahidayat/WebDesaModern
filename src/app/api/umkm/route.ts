@@ -1,44 +1,45 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createUMKM, getUMKM, updateUMKM, deleteUMKM, getUMKMById } from "@/services/umkm";
-import upload from "@/lib/uploadMiddleware";
-import { promises as fs } from 'fs';
+import { createUMKM, deleteUMKM, getUMKM, getUMKMById, updateUMKM } from "@/services/umkm";
+import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
 
-// export const config = {
-//     api: {
-//         bodyParser: false,
-//     },
-// };
-
-export const runtime = 'nodejs';
-export const preferredRegion = 'auto';
 
 export async function POST(req: NextRequest) {
-    return new Promise<NextResponse>((resolve) => {
-        upload.array('gambar')(req as any, {} as any, async (err) => {
-            if (err) {
-                console.error("Error handling file upload:", err);
-                return resolve(NextResponse.json({ error: "Terjadi kesalahan saat mengunggah file." }, { status: 500 }));
-            }
+    try {
+        const formData = await req.formData();
+        const umkmData = JSON.parse(formData.get('umkmData') as string);
+        const files = formData.getAll('gambar') as File[];
 
-            try {
-                const formData = await req.formData();
-                const umkmData = JSON.parse(formData.get('umkmData') as string);
-                const files = (req as any).files as Express.Multer.File[];
 
-                const gambarUMKM = files.map((file, index) => ({
-                    url: `/uploads/umkm/${file.filename}`,
-                    keterangan: formData.get(`keterangan_${index}`) as string,
-                }));
+        if (!files || files.length === 0) {
+            return NextResponse.json({ error: "No files were uploaded." }, { status: 400 });
+        }
 
-                const data = await createUMKM(umkmData, gambarUMKM);
-                resolve(NextResponse.json(data));
-            } catch (error) {
-                console.error("Error handling POST request:", error);
-                resolve(NextResponse.json({ error: "Terjadi kesalahan pada server." }, { status: 500 }));
-            }
-        });
-    });
+        // Ensure the upload directory exists
+        const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'umkm');
+        await mkdir(uploadDir, { recursive: true });
+
+        const gambarUMKM = await Promise.all(files.map(async (file, index) => {
+            const bytes = await file.arrayBuffer();
+            const buffer = Buffer.from(bytes);
+
+            const fileName = `${Date.now()}-${file.name.replace(/\s/g, '_')}`;
+            const filePath = path.join(uploadDir, fileName);
+
+            await writeFile(filePath, buffer);
+
+            return {
+                url: `/uploads/umkm/${fileName}`,
+                keterangan: `Image ${index + 1}`,
+            };
+        }));
+
+        const data = await createUMKM(umkmData, gambarUMKM);
+        return NextResponse.json(data);
+    } catch (error) {
+        console.error("Error handling POST request:", error);
+        return NextResponse.json({ error: "Terjadi kesalahan pada server." }, { status: 500 });
+    }
 }
 
 export async function GET(req: NextRequest) {

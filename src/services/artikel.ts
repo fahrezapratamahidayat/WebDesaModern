@@ -23,9 +23,9 @@ export async function getArtikels() {
             }
         });
         if (!data || data.length === 0) {
-            return null
+            return { data: null, message: "Tidak ada UMKM yang ditemukan." };
         }
-        return data
+        return { data, message: "artikel berhasil ditemukan." };
     } catch (error) {
         return {
             error: error

@@ -2,38 +2,34 @@ import React from "react";
 import { Badge } from "../ui/badge";
 import { Filter, User, MapPin, Calendar, Clock } from "lucide-react";
 import { Button } from "../ui/button";
+import useSWR from "swr";
+import axios from "axios";
+import { format, parseISO } from "date-fns";
+import { id } from "date-fns/locale";
+
+interface Kegiatan {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+  nama: string;
+  jenis: string;
+  tanggal: string;
+  waktu: string;
+  lokasi: string;
+  dibuat: string;
+  postedBy: string;
+  penulisId: number;
+}
 
 export default function KegiatanSection() {
-  const kegiatanDesa = [
-    {
-      nama: "Gotong Royong Membersihkan Sungai",
-      jenis: "Lingkungan",
-      tanggal: "10 Agustus 2024",
-      waktu: "08:00 - 12:00 WIB",
-      lokasi: "Sungai Citarum, RT 03/RW 02",
-      dibuat: "2024-07-15",
-      postedBy: "Admin Desa",
-    },
-    {
-      nama: "Pelatihan Keterampilan Digital",
-      jenis: "Pendidikan",
-      tanggal: "15-17 September 2024",
-      waktu: "09:00 - 15:00 WIB",
-      lokasi: "Balai Desa Karyamekar",
-      dibuat: "2024-07-01",
-      postedBy: "Sekretaris Desa",
-    },
-    {
-      nama: "Festival Budaya Desa",
-      jenis: "Budaya",
-      tanggal: "1-3 Oktober 2024",
-      waktu: "10:00 - 22:00 WIB",
-      lokasi: "Lapangan Desa Karyamekar",
-      dibuat: "2024-06-20",
-      postedBy: "Kepala Desa",
-    },
-  ];
-
+  const fetcher = async () => {
+    const res = await axios.get("http://localhost:3000/api/kegiatan");
+    return res.data.data;
+  };
+  const { data, isLoading, error } = useSWR("/api/kegiatan", fetcher);
+  if (isLoading) return <div className="">loading</div>;
+  if (error) return <div className="">error</div>;
+  if (!data) return <div className="">Data belum tersedia</div>;
   return (
     <section
       id="kegiatan"
@@ -47,7 +43,7 @@ export default function KegiatanSection() {
           <Filter className="w-4 h-4" />
         </Button>
       </div>
-      {kegiatanDesa.map((kegiatan, index) => (
+      {data.map((kegiatan: Kegiatan, index: number) => (
         <div
           key={index}
           className="group flex flex-col p-6 rounded-lg bg-card hover:bg-accent transition duration-300 shadow-sm hover:shadow-md"
@@ -56,14 +52,20 @@ export default function KegiatanSection() {
             {kegiatan.nama}
           </h2>
           <div className="flex flex-wrap items-center gap-2 mb-3">
-            <Badge variant="default">{kegiatan.jenis}</Badge>
+            <Badge variant="default" className="text-white">
+              {kegiatan.jenis}
+            </Badge>
             <div className="flex items-center text-sm text-muted-foreground">
               <Calendar className="w-4 h-4 mr-1" />
-              <span>{kegiatan.tanggal}</span>
+              <span>
+                {format(parseISO(kegiatan.tanggal), "d MMMM yyyy", {
+                  locale: id,
+                })}
+              </span>
             </div>
             <div className="flex items-center text-sm text-muted-foreground">
               <Clock className="w-4 h-4 mr-1" />
-              <span>{kegiatan.waktu}</span>
+              <span>{kegiatan.waktu} - selesai</span>
             </div>
           </div>
           <div className="flex items-center text-sm text-muted-foreground mb-2">
@@ -75,7 +77,12 @@ export default function KegiatanSection() {
             <span>Diposting oleh: {kegiatan.postedBy}</span>
           </div>
           <div className="text-xs text-muted-foreground mt-3">
-            <p>Dibuat: {kegiatan.dibuat}</p>
+            <p>
+              Dibuat:{" "}
+              {format(parseISO(kegiatan.dibuat), "d MMMM yyyy", {
+                locale: id,
+              })}
+            </p>
           </div>
         </div>
       ))}

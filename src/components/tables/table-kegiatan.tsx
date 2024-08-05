@@ -102,21 +102,29 @@ export const columns: ColumnDef<KegiatanDesa>[] = [
     accessorKey: "waktu",
     header: () => <div className="hidden sm:table-cell">Waktu</div>,
     cell: ({ row }) => {
-      return <div className="hidden sm:table-cell">{row.getValue("waktu")}</div>;
+      return (
+        <div className="hidden sm:table-cell">{row.getValue("waktu")}</div>
+      );
     },
   },
   {
     accessorKey: "lokasi",
     header: () => <div className="hidden sm:table-cell">Lokasi</div>,
     cell: ({ row }) => {
-      return <div className="hidden sm:table-cell">{row.getValue("lokasi")}</div>;
+      return (
+        <div className="hidden sm:table-cell">{row.getValue("lokasi")}</div>
+      );
     },
   },
   {
     accessorKey: "postedBy",
     header: () => <div className="hidden sm:table-cell">Penulis</div>,
     cell: ({ row }) => {
-      return <div className="hidden font-medium sm:table-cell">{row.getValue("postedBy")}</div>;
+      return (
+        <div className="hidden font-medium sm:table-cell">
+          {row.getValue("postedBy")}
+        </div>
+      );
     },
   },
   {
@@ -257,7 +265,22 @@ export default function TableKegiatanDesa<TData extends KegiatanDesa, TValue>({
                     Semua
                   </DropdownMenuCheckboxItem>
                 </DropdownMenuItem>
-                {/* Add more DropdownMenuItems for different jenis kegiatan */}
+                <DropdownMenuItem onSelect={() => setJenisFilter("Pendidikan")}>
+                  <DropdownMenuCheckboxItem
+                    onCheckedChange={() => setJenisFilter("Pendidikan")}
+                    checked={jenisFilter === "Pendidikan"}
+                  >
+                    Pendidikan
+                  </DropdownMenuCheckboxItem>
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => setJenisFilter("Kesehatan")}>
+                  <DropdownMenuCheckboxItem
+                    onCheckedChange={() => setJenisFilter("Kesehatan")}
+                    checked={jenisFilter === "Kesehatan"}
+                  >
+                    Kesehatan
+                  </DropdownMenuCheckboxItem>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
             <div className="flex items-center">

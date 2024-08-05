@@ -1,8 +1,7 @@
-"use client";
+"use client";;
 import axios from "axios";
 import AdminLayout from "../layouts/admin-layout";
-import useSWR, { useSWRConfig } from "swr";
-import { useCurrentRole } from "@/hooks/use-current-role";
+import useSWR from "swr";
 import SidebarSkeleton from "../skeletons/sidebar";
 import { Card, CardContent } from "../ui/card";
 import TableArtikelSkeleton from "../skeletons/table";
@@ -11,11 +10,8 @@ import TableKegiatanDesa, { columns } from "../tables/table-kegiatan";
 export default function AdminKegiatanPage() {
 
   const fetcher = async () => {
-    const params = { statuskamar: "reserved" };
-    const response = await axios.get("/api/kegiatan", {
-      params,
-    });
-    return response.data;
+    const response = await axios.get("/api/kegiatan");
+    return response.data.data;
   };
 
   const { data, error, isLoading } = useSWR("/kegiatan", fetcher);

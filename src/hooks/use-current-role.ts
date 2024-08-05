@@ -3,6 +3,7 @@ import { useSession } from "next-auth/react";
 declare module "next-auth" {
     interface User {
         role?: string;
+        nama: string;
     }
 }
 

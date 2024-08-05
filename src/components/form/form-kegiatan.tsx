@@ -1,16 +1,9 @@
-"use client";
+"use client";;
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { format } from "date-fns";
-import { Calendar as CalendarIcon, Plus } from "lucide-react";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-} from "@/components/ui/card";
+import { Calendar as CalendarIcon, Loader2, Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -45,6 +38,9 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useState } from "react";
+import axios from "axios";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { toast } from "sonner";
 
 const formSchema = z.object({
   nama: z.string().min(2, {
@@ -60,6 +56,8 @@ const formSchema = z.object({
 
 export function KegiatanDesaForm() {
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const user = useCurrentUser();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -70,15 +68,28 @@ export function KegiatanDesaForm() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    // Here you would typically send the data to your backend
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
+    try {
+      const response = await axios.post("/api/kegiatan", {
+        ...values,
+        postedBy: user?.nama,
+        penulisId: user?.id,
+      });
+      toast.success('kegiatan berhasil dibuat')
+      form.reset()
+      setOpen(false)
+    } catch (error) {
+      toast.success(`kegiatan gagal dibuat`)
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">
+        <Button variant="default" className="text-white">
           <Plus className="mr-2 h-4 w-4" /> Tambah Kegiatan Desa
         </Button>
       </DialogTrigger>
@@ -209,7 +220,16 @@ export function KegiatanDesaForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit">Submit</Button>
+            {loading ? (
+              <Button className="w-full" type="submit" disabled>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Loading
+              </Button>
+            ) : (
+              <Button type="submit" className="w-full">
+                Buat
+              </Button>
+            )}
           </form>
         </Form>
       </DialogContent>
