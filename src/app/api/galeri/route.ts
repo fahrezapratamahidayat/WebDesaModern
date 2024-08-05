@@ -1,0 +1,42 @@
+import { NextRequest, NextResponse } from "next/server";
+import { writeFile, mkdir } from 'fs/promises';
+import path from 'path';
+import { createNewGaleri } from "@/services/galeri";
+
+export async function POST(req: NextRequest) {
+    try {
+        const formData = await req.formData();
+        const galeriData = JSON.parse(formData.get('galeriData') as string);
+        const files = formData.getAll('gambar') as File[];
+
+
+        if (!files || files.length === 0) {
+            return NextResponse.json({ error: "No files were uploaded." }, { status: 400 });
+        }
+
+        
+        const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'galeri');
+        await mkdir(uploadDir, { recursive: true });
+
+        const gambarGaleri = await Promise.all(files.map(async (file, index) => {
+            const bytes = await file.arrayBuffer();
+            const buffer = Buffer.from(bytes);
+
+            const fileName = `${Date.now()}-${file.name.replace(/\s/g, '_')}`;
+            const filePath = path.join(uploadDir, fileName);
+
+            await writeFile(filePath, buffer);
+
+            return {
+                url: `/uploads/umkm/${fileName}`,
+                keterangan: `Image ${index + 1}`,
+            };
+        }));
+
+        const data = await createNewGaleri(galeriData, gambarGaleri);
+        return NextResponse.json(data);
+    } catch (error) {
+        console.error("Error handling POST request:", error);
+        return NextResponse.json({ error: "Terjadi kesalahan pada server." }, { status: 500 });
+    }
+}
