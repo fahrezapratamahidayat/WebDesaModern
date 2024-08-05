@@ -5,6 +5,10 @@ const nextConfig = {
             {
                 protocol: "https",
                 hostname: "www.whitehouse.gov",
+            },
+            {
+                protocol: "http",
+                hostname: "localhost"
             }
         ]
     }
