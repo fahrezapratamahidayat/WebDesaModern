@@ -8,6 +8,7 @@
     "push:mysql": "dotenv -e .env.development -- npx prisma db push",
     "studio": "dotenv -e .env.development -- npx prisma studio",
     "generate": "dotenv -e .env.development -- npx prisma generate",
+    "create": "dotenv -e .env.development -- npx prisma migrate dev --create-only",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
