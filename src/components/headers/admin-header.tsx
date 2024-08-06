@@ -72,14 +72,14 @@ export default function Header() {
             <Link href={"/#artikel"} className="text-sm text-balance">
               Artikel
             </Link>
-            <Link href={"/Kontak"} className="text-sm text-balance">
+            <Link href={"/#kontak"} className="text-sm text-balance">
               Kontak
             </Link>
           </nav>
           <Sheet>
             <SheetTrigger asChild>
               <Button size="icon" variant="outline" className="sm:hidden">
-                <AlignRight className="h-4 w-4 text-primary" />
+                <AlignRight className="h-4 w-4 " />
                 <span className="sr-only">Toggle Menu</span>
               </Button>
             </SheetTrigger>
