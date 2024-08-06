@@ -1,20 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
-import { createNewGaleri } from "@/services/galeri";
+import { createNewGaleri, getGambarGaleri } from "@/services/galeri";
 
 export async function POST(req: NextRequest) {
     try {
         const formData = await req.formData();
-        const galeriData = JSON.parse(formData.get('galeriData') as string);
+        const keterangan = formData.get('keterangan') as string; 
         const files = formData.getAll('gambar') as File[];
-
 
         if (!files || files.length === 0) {
             return NextResponse.json({ error: "No files were uploaded." }, { status: 400 });
         }
 
-        
         const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'galeri');
         await mkdir(uploadDir, { recursive: true });
 
@@ -28,15 +26,28 @@ export async function POST(req: NextRequest) {
             await writeFile(filePath, buffer);
 
             return {
-                url: `/uploads/umkm/${fileName}`,
-                keterangan: `Image ${index + 1}`,
+                url: `/uploads/galeri/${fileName}`,
+                keterangan: keterangan || `Image ${index + 1}` 
             };
         }));
 
-        const data = await createNewGaleri(galeriData, gambarGaleri);
+        const data = await createNewGaleri(gambarGaleri);
         return NextResponse.json(data);
     } catch (error) {
         console.error("Error handling POST request:", error);
+        return NextResponse.json({ error: "Terjadi kesalahan pada server." }, { status: 500 });
+    }
+}
+
+export async function GET(req: NextRequest){
+    try {
+        const data = await getGambarGaleri()
+        if(!data.data){
+            return NextResponse.json({ error: "Tidak ada gambar galeri yang ditemukan." }, { status: 404 });
+        }
+        return NextResponse.json(data);
+    } catch (error) {
+        console.error("Error handling GET request:", error);
         return NextResponse.json({ error: "Terjadi kesalahan pada server." }, { status: 500 });
     }
 }
