@@ -13,7 +13,7 @@ export default function FooterSection() {
           <div>
             <h3 className="text-lg font-semibold mb-4">Desa Karyamekar</h3>
             <p className="text-sm text-muted-foreground">
-              Desa Karyamekar adalah desa yang terletak di Kabupaten Sukamaju,
+              Desa Karyamekar adalah desa yang terletak di Kabupaten Garut,
               yang terus berkembang dan berkomitmen untuk kesejahteraan
               masyarakat.
             </p>
@@ -34,17 +34,17 @@ export default function FooterSection() {
                 </a>
               </li>
               <li>
-                <a href="#" className="text-sm hover:underline">
+                <a href="#layanan" className="text-sm hover:underline">
                   Layanan
                 </a>
               </li>
               <li>
-                <a href="#" className="text-sm hover:underline">
+                <a href="#kegiatan" className="text-sm hover:underline">
                   Berita
                 </a>
               </li>
               <li>
-                <a href="#" className="text-sm hover:underline">
+                <a href="#kontak" className="text-sm hover:underline">
                   Kontak
                 </a>
               </li>
@@ -57,7 +57,7 @@ export default function FooterSection() {
             <address className="text-sm text-muted-foreground not-italic">
               Jl. Desa Karyamekar No. 123
               <br />
-              Kabupaten Sukamaju
+              Kabupaten Garut
               <br />
               Provinsi Jawa Barat
               <br />
@@ -82,7 +82,7 @@ export default function FooterSection() {
                 placeholder="Alamat Email"
                 className="max-w-[200px]"
               />
-              <Button size="sm">
+              <Button size="sm" className="text-white">
                 <Send className="w-4 h-4" />
               </Button>
             </div>
