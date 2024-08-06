@@ -62,7 +62,7 @@ export default function UMKMCard({
   useMotionValueEvent(scrollYProgress, "change", (current) => {});
 
   return (
-    <div className="flex lg:flex-row flex-col justify-between w-full gap-6 overflow-visible ">
+    <div className="flex lg:flex-row flex-col justify-between w-full mt-20 gap-6 overflow-visible ">
       <div className="w-full lg:w-1>/2">
         <div
           className={`flex flex-col gap-y-6 ${
@@ -73,7 +73,7 @@ export default function UMKMCard({
             <h2 className="font-semibold text-balance tracking-tighter text-2xl">
               {nama}
             </h2>
-            <p className="text-sm text-muted-foreground leading-snug text-balance">
+            <p className="text-sm text-muted-foreground leading-snug text-justify">
               {deskripsi}
             </p>
             <div className="">
@@ -115,12 +115,8 @@ export default function UMKMCard({
                 <span className="text-sm text-muted-foreground">
                   Keunggulan
                 </span>
-                <div className="flex flex-col ml-auto">
-                  {keunggulan.split(",").map((item, index) => (
-                    <span key={index} className="text-sm text-balance">
-                      {item.trim()}
-                    </span>
-                  ))}
+                <div className="flex flex-col ml-10">
+                  <span className="text-sm text-justify">{keunggulan}</span>
                 </div>
               </motion.div>
               <motion.div
@@ -186,12 +182,12 @@ export default function UMKMCard({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5, delay: (index + 1) * 0.2 }}
-              className="w-full h-full"
+              className="w-full h-[500px]"
             >
               <Image
                 src={`http://localhost:3000${image.url}`} // Perbaikan di sini
                 alt={`gambar${index + 1}`}
-                className="object-cover w-full h-full"
+                className="object-cover w-full h-full rounded-md"
                 height={800}
                 width={800}
               />
