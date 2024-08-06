@@ -15,7 +15,7 @@ export default function AdminArtikelPage() {
     return response.data.data;
   };
 
-  const { data, error, isLoading } = useSWR("/rooms", fetcher);
+  const { data, error, isLoading } = useSWR("/artikel", fetcher);
   if (error) return <div>failed to load</div>;
   if (isLoading)
     return (
