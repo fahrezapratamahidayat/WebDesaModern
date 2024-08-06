@@ -9,6 +9,7 @@
     "studio": "dotenv -e .env.development -- npx prisma studio",
     "generate": "dotenv -e .env.development -- npx prisma generate",
     "create": "dotenv -e .env.development -- npx prisma migrate dev --create-only",
+    "reset": "dotenv -e .env.development -- npx prisma migrate reset",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
