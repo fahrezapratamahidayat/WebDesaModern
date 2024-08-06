@@ -15,7 +15,7 @@ import {
   CalendarIcon,
   HamburgerMenuIcon,
 } from "@radix-ui/react-icons";
-import { ArrowLeft, ArrowRight, LogOutIcon, Package2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, GalleryHorizontal, GalleryThumbnails, LogOutIcon, Package2 } from "lucide-react";
 import { signOut } from "next-auth/react";
 
 export default function SidebarAdmin() {
@@ -27,6 +27,7 @@ export default function SidebarAdmin() {
     { icon: FileTextIcon, label: "Artikel", href: "/admin/artikel" },
     { icon: CalendarIcon, label: "Kegiatan", href: "/admin/kegiatan" },
     { icon: HamburgerMenuIcon, label: "UMKM", href: "/admin/umkm" },
+    { icon: GalleryThumbnails, label: "Galeri", href: "/admin/galeri" },
   ];
 
   return (

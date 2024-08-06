@@ -6,7 +6,7 @@ export const getKegiatan = async (): Promise<{ data: KegiatanDesa[] | null, mess
     try {
         const data = await prisma.kegiatanDesa.findMany();
         if (!data || data.length === 0) {
-            return { data: null, message: "Tidak ada kegiatan yang ditemukan." };
+            return { data: [], message: "Tidak ada kegiatan yang ditemukan." };
         }
         return { data, message: "Kegiatan berhasil ditemukan." };
     } catch (error) {

@@ -10,7 +10,7 @@ export const getUMKM = async (): Promise<{ data: UMKM[] | null; message: string 
             include: { GambarUMKM: true },
         });
         if (!data || data.length === 0) {
-            return { data: null, message: "Tidak ada UMKM yang ditemukan." };
+            return { data: [], message: "Tidak ada UMKM yang ditemukan." };
         }
         return { data, message: "UMKM berhasil ditemukan." };
     } catch (error) {

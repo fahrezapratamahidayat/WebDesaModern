@@ -8,7 +8,7 @@ import { Phone, Mail, MapPin, Send } from "lucide-react";
 
 export default function KontakDesaSection() {
   return (
-    <section className="container mx-auto py-12">
+    <section id="kontak" className="container mx-auto py-12">
       <h1 className="text-3xl font-bold tracking-tight mb-8">Hubungi Kami</h1>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <Card>

@@ -23,7 +23,7 @@ export async function getArtikels() {
             }
         });
         if (!data || data.length === 0) {
-            return { data: null, message: "Tidak ada UMKM yang ditemukan." };
+            return { data: [], message: "Tidak ada UMKM yang ditemukan." };
         }
         return { data, message: "artikel berhasil ditemukan." };
     } catch (error) {
