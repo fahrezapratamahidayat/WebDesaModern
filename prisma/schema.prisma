@@ -63,10 +63,10 @@ model KegiatanDesa {
 model UMKM {
   id          String       @id @default(uuid())
   nama        String
-  deskripsi   String
+  deskripsi   String @db.Text
   jenisUsaha  String
   produkUtama String
-  keunggulan  String
+  keunggulan  String @db.Text
   alamat      String
   telepon     String
   email       String?
@@ -89,4 +89,5 @@ model GambarGaleri {
   id         String @id @default(uuid())
   url        String
   keterangan String
+  createdAt  DateTime @default(now())
 }
