@@ -36,23 +36,20 @@ import {
 } from "@/components/ui/select";
 
 const formSchema = z.object({
-  nama: z.string().min(2, {
-    message: "Nama UMKM harus memiliki minimal 2 karakter.",
-  }),
-  deskripsi: z.string().min(10, {
-    message: "Deskripsi harus memiliki minimal 10 karakter.",
+  keterangan: z.string().min(10, {
+    message: "keterangan harus memiliki minimal 10 karakter.",
   }),
   gambar: z.array(z.instanceof(File)),
 });
 
-export function UMKMForm() {
+export function GaleriForm() {
   const [open, setOpen] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      deskripsi: "",
+      keterangan: "",
       gambar: [],
     },
   });
@@ -63,7 +60,7 @@ export function UMKMForm() {
     formData.append(
       "galeri",
       JSON.stringify({
-        deskripsi: values.deskripsi,
+        keterangan: values.keterangan,
       })
     );
 
@@ -93,14 +90,14 @@ export function UMKMForm() {
       <DialogTrigger asChild>
         <Button className="text-white font-medium">
           <Plus className="mr-2 h-4 w-4 text-white" />
-          Tambah UMKM
+          Tambah Galeri Desa
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[1200px] h-[600px]">
         <DialogHeader>
-          <DialogTitle>Tambah UMKM Baru</DialogTitle>
+          <DialogTitle>Tambah Galeri Desa Baru</DialogTitle>
           <DialogDescription>
-            Isi formulir di bawah ini untuk menambahkan UMKM baru.
+            Isi formulir di bawah ini untuk menambahkan Galeri Desa baru.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -110,23 +107,10 @@ export function UMKMForm() {
                 <div className="space-y-4">
                   <FormField
                     control={form.control}
-                    name="nama"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Nama UMKM</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Masukkan nama UMKM" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
                     name="gambar"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Gambar UMKM</FormLabel>
+                        <FormLabel>Gambar Galeri Desa</FormLabel>
                         <FormControl>
                           <div className="space-y-4">
                             <FileUploader
@@ -135,12 +119,28 @@ export function UMKMForm() {
                                 field.onChange(newFiles);
                                 setFiles(newFiles);
                               }}
-                              maxFiles={3}
+                              maxFiles={1}
                               maxSize={1024 * 1024 * 10}
                               accept={{ "image/*": [] }}
                               multiple={true}
                             />
                           </div>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="keterangan"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Keterangan Gambar</FormLabel>
+                        <FormControl>
+                          <Textarea
+                            placeholder="Masukkan keterangan gambar"
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
