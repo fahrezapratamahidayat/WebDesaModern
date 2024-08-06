@@ -8,10 +8,10 @@ export default function HeroSection() {
       className="scroll-m-0 relative overflow-hidden flex h-screen flex-col px-20 items-center justify-center"
     >
       <div className="absolute top-0 left-0 w-full h-full lg:mt-0">
-        <img
+        <Image
           width={800}
           height={800}
-          src="https://images.unsplash.com/photo-1577942948749-a3dbb5c6db0a?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+          src={`/hero-image1.jpeg`}
           alt=""
           className="w-full h-full object-cover filter brightness-50"
         />
