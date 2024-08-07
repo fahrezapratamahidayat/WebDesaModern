@@ -11,7 +11,12 @@
     "create": "dotenv -e .env.development -- npx prisma migrate dev --create-only",
     "reset": "dotenv -e .env.development -- npx prisma migrate reset",
     "build": "next build",
+    "build:prod": "dotenv -e .env.production -- next build",
     "start": "next start",
+    "start:prod": "dotenv -e .env.production -- next start",
+    "migrate:prod": "dotenv -e .env.production -- npx prisma migrate dev --name init_prod",
+    "reset:prod": "dotenv -e .env.production -- npx prisma migrate reset",
+    "deploy": "dotenv -e .env.production -- npx prisma migrate deploy",
     "lint": "next lint"
   },
   "dependencies": {
@@ -85,7 +90,8 @@
     "usehooks-ts": "^3.1.0",
     "uuid": "^10.0.0",
     "vaul": "^0.9.1",
-    "zod": "^3.23.8"
+    "zod": "^3.23.8",
+    "zustand": "^4.5.4"
   },
   "devDependencies": {
     "@tanstack/eslint-plugin-query": "^5.51.15",
