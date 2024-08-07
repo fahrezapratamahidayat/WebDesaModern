@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 import {
   ArrowUpDown,
@@ -5,6 +6,7 @@ import {
   Edit2,
   EyeIcon,
   MoreHorizontal,
+  Plus,
   Trash2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -47,10 +49,15 @@ import React, { useMemo, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { UMKM } from "@prisma/client";
+import { GambarUMKM, UMKM } from "@prisma/client";
 import { UMKMForm } from "../form/form-umkm";
+import { useUMKMStore } from "@/hooks/use-umkm-store";
 
-export const columns: ColumnDef<UMKM>[] = [
+interface UMKMWithGambar extends UMKM {
+  GambarUMKM: GambarUMKM[];
+}
+
+export const columns: ColumnDef<UMKMWithGambar>[] = [
   {
     accessorKey: "nama",
     header: ({ column }) => <div className="">Nama UMKM</div>,
@@ -86,6 +93,7 @@ export const columns: ColumnDef<UMKM>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
+      const { setEditingUMKM } = useUMKMStore();
       const umkm = row.original;
       return (
         <DropdownMenu>
@@ -101,7 +109,7 @@ export const columns: ColumnDef<UMKM>[] = [
               <EyeIcon className="mr-2 w-4 h-4" />
               Lihat
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => setEditingUMKM(umkm)}>
               <Edit2 className="mr-2 w-4 h-4" />
               Edit UMKM
             </DropdownMenuItem>
@@ -129,6 +137,9 @@ export default function TableUMKM<TData extends UMKM, TValue>({
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
+  const { editingUMKM, formMode, setEditingUMKM, openCreateDialog } =
+    useUMKMStore();
+  console.log(editingUMKM, formMode);
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [statusFilter, setStatusFilter] = useState("");
@@ -161,6 +172,7 @@ export default function TableUMKM<TData extends UMKM, TValue>({
 
   return (
     <>
+      <UMKMForm />
       <Card>
         <CardHeader>
           <CardTitle>Artikel Desa</CardTitle>
@@ -262,9 +274,13 @@ export default function TableUMKM<TData extends UMKM, TValue>({
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <div className="flex items-center">
-              <UMKMForm />
-            </div>
+            <Button
+              onClick={openCreateDialog}
+              className="text-white font-medium"
+            >
+              <Plus className="mr-2 h-4 w-4 text-white" />
+              Tambah UMKM
+            </Button>
           </div>
           <Table>
             {" "}
