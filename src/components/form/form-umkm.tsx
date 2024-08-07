@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -34,6 +34,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { UMKM } from "@prisma/client";
+import { useUMKMStore } from "@/hooks/use-umkm-store";
+import { UploadedFilesCard } from "../card/uploaded-files-card";
 
 const formSchema = z.object({
   nama: z.string().min(2, {
@@ -76,8 +79,11 @@ const formSchema = z.object({
 
 export function UMKMForm() {
   const [open, setOpen] = useState(false);
+  const { isDialogOpen, formMode, editingUMKM, closeDialog } = useUMKMStore();
   const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentUMKMId, setCurrentUMKMId] = useState<string | null>(null);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -94,6 +100,7 @@ export function UMKMForm() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    setLoading(true);
     const formData = new FormData();
 
     const keunggulanString = values.keunggulan.join(",");
@@ -117,33 +124,45 @@ export function UMKMForm() {
     });
 
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/umkm",
-        formData,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      );
+      const url = `http://localhost:3000/api/umkm${formMode === "update" ? `/${currentUMKMId}` : ""}`;
+      const method = formMode === "update" ? "PUT" : "POST";
 
-      toast.success("berhasil dibuat");
+      const response = await axios({
+        method: method,
+        url: url,
+        data: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      toast.success(
+        `UMKM berhasil ${formMode === "update" ? "diperbarui" : "dibuat"}`
+      );
+      setLoading(false);
+      setOpen(false);
     } catch (error: AxiosError | any) {
-      toast("gagal dibuat");
+      toast.error(
+        `Gagal ${formMode === "update" ? "memperbarui" : "membuat"} UMKM`
+      );
+      setLoading(false);
     }
   }
 
+  useEffect(() => {
+    if (editingUMKM) {
+      Object.keys(editingUMKM).forEach((key) => {
+        form.setValue(key as any, editingUMKM[key as keyof UMKM]);
+      });
+    }
+  }, [editingUMKM, form]);
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="text-white font-medium">
-          <Plus className="mr-2 h-4 w-4 text-white" />
-          Tambah UMKM
-        </Button>
-      </DialogTrigger>
+    <Dialog open={isDialogOpen} onOpenChange={closeDialog}>
       <DialogContent className="sm:max-w-[1200px] h-[600px]">
         <DialogHeader>
-          <DialogTitle>Tambah UMKM Baru</DialogTitle>
+          <DialogTitle>
+            {formMode === "create" ? "Tambah UMKM Baru" : "Update UMKM"}
+          </DialogTitle>
           <DialogDescription>
             Isi formulir di bawah ini untuk menambahkan UMKM baru.
           </DialogDescription>
@@ -335,6 +354,17 @@ export function UMKMForm() {
                       </FormItem>
                     )}
                   />
+                  {formMode === "update" && editingUMKM && (
+                    <UploadedFilesCard
+                      uploadedFiles={editingUMKM.GambarUMKM?.map(
+                        (img: { id: string; url: string }) => ({
+                          key: img.id,
+                          url: `http://localhost:3000${img.url}`,
+                          name: img.id,
+                        })
+                      )}
+                    />
+                  )}
                 </div>
               </div>
               {loading ? (
@@ -344,7 +374,7 @@ export function UMKMForm() {
                 </Button>
               ) : (
                 <Button type="submit" className="w-full text-white">
-                  Tambah UMKM
+                  {formMode === "create" ? "Tambah UMKM" : "Update UMKM"}
                 </Button>
               )}
             </form>
