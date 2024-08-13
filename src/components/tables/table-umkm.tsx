@@ -52,6 +52,8 @@ import { cn } from "@/lib/utils";
 import { GambarUMKM, UMKM } from "@prisma/client";
 import { UMKMForm } from "../form/form-umkm";
 import { useUMKMStore } from "@/hooks/use-umkm-store";
+import FormDelete from "../form/form-delete";
+import Link from "next/link";
 
 interface UMKMWithGambar extends UMKM {
   GambarUMKM: GambarUMKM[];
@@ -69,7 +71,7 @@ export const columns: ColumnDef<UMKMWithGambar>[] = [
     accessorKey: "jenisUsaha",
     header: ({ column }) => <div className="">Jenis Usaha</div>,
     cell: ({ row }) => {
-      return <Badge variant="outline">{row.getValue("jenisUsaha")}</Badge>;
+      return <Badge variant="default" className="capitalize text-white tracking-normal">{row.getValue("jenisUsaha")}</Badge>;
     },
   },
   {
@@ -93,7 +95,7 @@ export const columns: ColumnDef<UMKMWithGambar>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const { setEditingUMKM } = useUMKMStore();
+      const { setEditingUMKM, openDeleteDialog } = useUMKMStore();
       const umkm = row.original;
       return (
         <DropdownMenu>
@@ -107,13 +109,17 @@ export const columns: ColumnDef<UMKMWithGambar>[] = [
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem>
               <EyeIcon className="mr-2 w-4 h-4" />
-              Lihat
+              <Link href={`/#${umkm.nama}`}>Lihat</Link>
             </DropdownMenuItem>
             <DropdownMenuItem onSelect={() => setEditingUMKM(umkm)}>
               <Edit2 className="mr-2 w-4 h-4" />
               Edit UMKM
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onSelect={() => {
+                openDeleteDialog(umkm);
+              }}
+            >
               <Trash2 className="mr-2 w-4 h-4" />
               Hapus UMKM
             </DropdownMenuItem>
@@ -139,7 +145,6 @@ export default function TableUMKM<TData extends UMKM, TValue>({
   );
   const { editingUMKM, formMode, setEditingUMKM, openCreateDialog } =
     useUMKMStore();
-  console.log(editingUMKM, formMode);
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [statusFilter, setStatusFilter] = useState("");
@@ -173,6 +178,7 @@ export default function TableUMKM<TData extends UMKM, TValue>({
   return (
     <>
       <UMKMForm />
+      <FormDelete />
       <Card>
         <CardHeader>
           <CardTitle>Artikel Desa</CardTitle>
