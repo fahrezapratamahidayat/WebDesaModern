@@ -9,8 +9,10 @@ import {
 } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { EmptyCard } from "../ui/empty-card";
+import { Button } from "../ui/button";
+import { X } from "lucide-react";
 
-export function UploadedFilesCard({ uploadedFiles }: any) {
+export function UploadedFilesCard({ uploadedFiles, onDelete }: any) {
   return (
     <>
       {uploadedFiles.length > 0 ? (
@@ -26,13 +28,20 @@ export function UploadedFilesCard({ uploadedFiles }: any) {
                   loading="lazy"
                   className="rounded-md object-cover"
                 />
+                {/* <Button
+                  variant="destructive"
+                  size="icon"
+                  className="absolute top-2 right-2"
+                >
+                  <X className="h-4 w-4" />
+                </Button> */}
               </div>
             ))}
           </div>
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
       ) : (
-        <p></p>
+        <p>Tidak ada gambar yang diunggah</p>
       )}
     </>
   );
