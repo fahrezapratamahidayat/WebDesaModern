@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createUMKM, deleteUMKM, getUMKM, getUMKMById, updateUMKM } from "@/services/umkm";
-import { writeFile, mkdir } from 'fs/promises';
+import { writeFile, mkdir, unlink } from 'fs/promises';
 import path from 'path';
-
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient()
 
 export async function POST(req: NextRequest) {
     try {
@@ -15,7 +16,6 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "No files were uploaded." }, { status: 400 });
         }
 
-        // Ensure the upload directory exists
         const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'umkm');
         await mkdir(uploadDir, { recursive: true });
 
@@ -67,8 +67,10 @@ export async function PUT(req: NextRequest) {
         if (!id) {
             return NextResponse.json({ error: "ID UMKM diperlukan." }, { status: 400 });
         }
-        const body = await req.json();
-        const data = await updateUMKM(id, body);
+        const formData = await req.formData();
+        const umkmData = JSON.parse(formData.get('umkmData') as string);
+        const files = formData.getAll('gambar') as File[];
+        const data = await updateUMKM(id, umkmData);
         return NextResponse.json(data);
     } catch (error) {
         console.error("Error handling PUT request:", error);
@@ -79,6 +81,7 @@ export async function PUT(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
     try {
         const id = req.nextUrl.searchParams.get('id');
+        console.log(id)
         if (!id) {
             return NextResponse.json({ error: "ID UMKM diperlukan." }, { status: 400 });
         }
