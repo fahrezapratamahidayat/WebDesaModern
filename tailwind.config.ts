@@ -56,7 +56,6 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // Warna baru ditambahkan di sini
         chart: {
           1: "hsl(var(--chart-1))",
           2: "hsl(var(--chart-2))",
