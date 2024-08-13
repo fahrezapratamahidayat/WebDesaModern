@@ -24,12 +24,6 @@ export default function LayananDesaSection() {
       description: "Dukungan dan pembinaan untuk UMKM dan koperasi desa.",
       badge: "Ekonomi",
     },
-    {
-      icon: <Home className="w-10 h-10" />,
-      title: "Perizinan Bangunan",
-      description: "Layanan perizinan untuk pembangunan dan renovasi.",
-      badge: "Infrastruktur",
-    },
   ];
 
   return (
@@ -43,7 +37,7 @@ export default function LayananDesaSection() {
           Berikut adalah beberapa layanan utama yang dapat kami berikan.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 justify-center place-content-center items-center place-items-center gap-6">
           {layananDesa.map((layanan, index) => (
             <Card key={index} className="flex flex-col">
               <CardHeader>
@@ -51,27 +45,27 @@ export default function LayananDesaSection() {
                 <CardTitle className="text-xl text-center mb-2">
                   {layanan.title}
                 </CardTitle>
-                <Badge className="mx-auto text-white">{layanan.badge}</Badge>
+                <Badge className="mx-auto ">{layanan.badge}</Badge>
               </CardHeader>
               <CardContent className="text-center flex-grow">
                 <p className="text-muted-foreground">{layanan.description}</p>
               </CardContent>
-              <div className="p-4 mt-auto">
+              {/* <div className="p-4 mt-auto">
                 <Button variant="outline" className="w-full text-white">
                   Detail Layanan
                   <ChevronRight className="w-4 h-4 ml-2" />
                 </Button>
-              </div>
+              </div> */}
             </Card>
           ))}
         </div>
 
-        <div className="text-center mt-12">
-          <Button size="lg" className="text-white">
+        {/* <div className="text-center mt-12">
+          <Button size="lg" className="">
             Lihat Semua Layanan
             <ChevronRight className="w-5 h-5 ml-2" />
           </Button>
-        </div>
+        </div> */}
       </div>
     </section>
   );
