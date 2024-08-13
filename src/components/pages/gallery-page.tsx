@@ -63,11 +63,11 @@ export default function GallerySection() {
         </div>
       ) : (
         <div className="group flex lg:flex-row flex-col lg:items-center lg:px-1 py-6 lg:gap-0 gap-5">
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid lg:grid-cols-3 grid-cols-1 gap-10">
             {data.map((item: any) => (
-              <div key={item.id}>
+              <div key={item.id} className="w-full h-full">
                 <Image
-                  className="h-full object-cover max-w-full rounded-lg cursor-pointer"
+                  className="h-full object-cover max-w-full rounded-lg cursor-pointer hover:scale-105 transition-all duration-300"
                   src={`http://localhost:3000${item.url}`}
                   alt={item.keterangan}
                   width={500}
@@ -83,7 +83,7 @@ export default function GallerySection() {
       )}
 
       <Dialog onOpenChange={setDialogOpen} open={dialogOpen}>
-        <DialogContent className="p-0 bg-transparent border-none h-[500px] w-[800px] max-w-full">
+        <DialogContent className="p-0 bg-transparent border-none lg:h-[500px] lg:w-[800px] max-w-full">
           <div className="">
             <Image
               src={imageLink}
