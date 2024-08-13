@@ -62,8 +62,11 @@ export default function UMKMCard({
   useMotionValueEvent(scrollYProgress, "change", (current) => {});
 
   return (
-    <div className="flex lg:flex-row flex-col justify-between w-full mt-20 gap-6 overflow-visible ">
-      <div className="w-full lg:w-1>/2">
+    <div
+      id={`${nama}`}
+      className="flex lg:flex-row flex-col justify-between w-full mt-20 gap-6 overflow-visible "
+    >
+      <div className="w-full lg:w-1/2">
         <div
           className={`flex flex-col gap-y-6 ${
             isSticky ? "sticky top-32 z-30 transition" : ""
