@@ -55,15 +55,14 @@ export default function SidebarAdmin() {
               <TooltipTrigger>
                 {" "}
                 <Link key={item.href} href={item.href}>
-                  <Button
-                    variant={pathname === item.href ? "default" : "ghost"}
-                    className={`w-full justify-start text-white text-sm ${isSidebarOpen ? "" : ""}`}
+                  <div
+                    className={`inline-flex items-center whitespace-nowrap rounded-md ${pathname === item.href ? "bg-primary text-primary-foreground hover:bg-primary/90" : "hover:bg-primary/50"} h-10 px-4 py-2 font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 w-full justify-start text-white text-sm ${isSidebarOpen ? "" : ""}`}
                   >
                     <item.icon className="h-5 w-5 text-white" />
                     {isSidebarOpen && (
                       <span className="ml-2">{item.label}</span>
                     )}
-                  </Button>
+                  </div>
                 </Link>
               </TooltipTrigger>
               <TooltipContent>
