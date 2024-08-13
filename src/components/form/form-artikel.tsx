@@ -76,8 +76,6 @@ export function ArticleDesaForm() {
         penulis: parseInt(session.user.id),
       };
 
-      console.log("Payload:", payload);
-
       const response = await axios.post("/api/artikel", payload);
       setLoading(false);
       form.reset();
