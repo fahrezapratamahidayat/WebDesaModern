@@ -78,12 +78,9 @@ const formSchema = z.object({
 });
 
 export function UMKMForm() {
-  const [open, setOpen] = useState(false);
   const { isDialogOpen, formMode, editingUMKM, closeDialog } = useUMKMStore();
   const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const [currentUMKMId, setCurrentUMKMId] = useState<string | null>(null);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -124,23 +121,26 @@ export function UMKMForm() {
     });
 
     try {
-      const url = `http://localhost:3000/api/umkm${formMode === "update" ? `/${currentUMKMId}` : ""}`;
+      const url = `http://localhost:3000/api/umkm${formMode === "update" ? `?id=${editingUMKM?.id}` : ""}`;
       const method = formMode === "update" ? "PUT" : "POST";
 
-      const response = await axios({
-        method: method,
-        url: url,
-        data: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      toast.success(
-        `UMKM berhasil ${formMode === "update" ? "diperbarui" : "dibuat"}`
+      toast.promise(
+        axios({
+          method: method,
+          url: url,
+          data: formData,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }),
+        {
+          loading: `Sedang ${formMode === "update" ? "memperbarui" : "membuat"} UMKM...`,
+          success: `UMKM berhasil ${formMode === "update" ? "diperbarui" : "dibuat"}`,
+          error: `Gagal ${formMode === "update" ? "memperbarui" : "membuat"} UMKM`,
+        }
       );
       setLoading(false);
-      setOpen(false);
+      closeDialog();
     } catch (error: AxiosError | any) {
       toast.error(
         `Gagal ${formMode === "update" ? "memperbarui" : "membuat"} UMKM`
@@ -155,9 +155,15 @@ export function UMKMForm() {
         form.setValue(key as any, editingUMKM[key as keyof UMKM]);
       });
     }
-  }, [editingUMKM, form]);
+    if (formMode === "create") {
+      form.reset();
+    }
+  }, [editingUMKM, form, formMode]);
   return (
-    <Dialog open={isDialogOpen} onOpenChange={closeDialog}>
+    <Dialog
+      open={formMode !== "delete" && isDialogOpen}
+      onOpenChange={closeDialog}
+    >
       <DialogContent className="sm:max-w-[1200px] h-[600px]">
         <DialogHeader>
           <DialogTitle>
