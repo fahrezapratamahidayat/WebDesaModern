@@ -87,7 +87,7 @@ export default function KegiatanSection() {
               {kegiatan.nama}
             </h2>
             <div className="flex flex-wrap items-center gap-2 mb-3">
-              <Badge variant="default" className="text-white">
+              <Badge variant="default" className="">
                 {kegiatan.jenis}
               </Badge>
               <div className="flex items-center text-sm text-muted-foreground">
