@@ -64,7 +64,7 @@ export default function FooterSection() {
               <br />
               Telepon: (021) 1234-5678
               <br />
-              Email: info@desakaryamekar.id
+              Email: karyamekar.cilawu@gmail.com
             </address>
           </div>
 
