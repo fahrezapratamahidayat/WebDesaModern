@@ -27,10 +27,10 @@ function Section({ title, icon, children }: SectionProps) {
       transition={{ duration: 0.5 }}
     >
       <Card className="overflow-hidden">
-        <CardHeader className="bg-primary py-3">
+        <CardHeader className="bg-muted py-3">
           <CardTitle className="flex items-center space-x-2">
             {icon}
-            <span className="text-white text-base">{title}</span>
+            <span className=" text-base">{title}</span>
           </CardTitle>
         </CardHeader>
         <CardContent className="p-6">{children}</CardContent>
@@ -42,19 +42,7 @@ function Section({ title, icon, children }: SectionProps) {
 export default function ProfilLengkapSection() {
   return (
     <section className="scroll-mt-[8rem] flex flex-col lg:px-32 px-4 min-h-screen gap-8 py-10">
-      {/* <motion.h1
-        className="text-4xl font-bold text-center mb-8"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        Profil Lengkap Desa Karyamekar
-      </motion.h1> */}
-
-      <Section
-        title="Data Umum"
-        icon={<MapPin className="w-4 h-4 text-white" />}
-      >
+      <Section title="Data Umum" icon={<MapPin className="w-4 h-4 " />}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex flex-col gap-1">
             <span>
@@ -87,10 +75,7 @@ export default function ProfilLengkapSection() {
         </div>
       </Section>
 
-      <Section
-        title="Data Demografis"
-        icon={<Users className="w-4 h-4 text-white" />}
-      >
+      <Section title="Data Demografis" icon={<Users className="w-4 h-4 " />}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="flex flex-col gap-1">
             <span>
@@ -123,7 +108,7 @@ export default function ProfilLengkapSection() {
 
       <Section
         title="Ekonomi dan Pekerjaan"
-        icon={<Briefcase className="w-4 h-4 text-white" />}
+        icon={<Briefcase className="w-4 h-4 " />}
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -158,7 +143,7 @@ export default function ProfilLengkapSection() {
 
       <Section
         title="Tingkat Pendidikan"
-        icon={<GraduationCap className="w-4 h-4 text-white" />}
+        icon={<GraduationCap className="w-4 h-4 " />}
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
@@ -186,10 +171,7 @@ export default function ProfilLengkapSection() {
         </div>
       </Section>
 
-      <Section
-        title="Infrastruktur"
-        icon={<Building className="w-4 h-4 text-white" />}
-      >
+      <Section title="Infrastruktur" icon={<Building className="w-4 h-4 " />}>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <h3 className="font-semibold mb-2">Kesehatan:</h3>
@@ -217,7 +199,7 @@ export default function ProfilLengkapSection() {
 
       <Section
         title="Lembaga Kemasyarakatan"
-        icon={<Landmark className="w-4 h-4 text-white" />}
+        icon={<Landmark className="w-4 h-4 " />}
       >
         <ul className="list-disc list-inside grid grid-cols-1 md:grid-cols-2 gap-2">
           <li>
