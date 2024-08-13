@@ -53,29 +53,55 @@ export const createUMKM = async (
     }
 };
 
-export const updateUMKM = async (id: string, data: Partial<UMKM>): Promise<UMKM> => {
+// export const updateUMKM = async (id: string, data: Partial<UMKM>): Promise<UMKM> => {
+//     try {
+//         const updatedUMKM = await prisma.uMKM.update({
+//             where: { id },
+//             data,
+//             include: { GambarUMKM: true },
+//         });
+//         return updatedUMKM;
+//     } catch (error) {
+//         console.error("Error updating UMKM:", error);
+//         throw error;
+//     }
+// };
+export async function updateUMKM(id: string, data: any, newGambarUMKM: any[] = []) {
     try {
         const updatedUMKM = await prisma.uMKM.update({
-            where: { id },
-            data,
-            include: { GambarUMKM: true },
+            where: { id: id },
+            data: {
+                ...data,
+                GambarUMKM: {
+                    create: newGambarUMKM
+                }
+            },
+            include: {
+                GambarUMKM: true
+            }
         });
         return updatedUMKM;
     } catch (error) {
         console.error("Error updating UMKM:", error);
         throw error;
     }
-};
+}
 
-export const deleteUMKM = async (id: string): Promise<UMKM> => {
+export const deleteUMKM = async (id: string) => {
     try {
-        const deletedUMKM = await prisma.uMKM.delete({
-            where: { id },
-            include: { GambarUMKM: true },
+        await prisma.gambarUMKM.deleteMany({
+            where: {
+                umkmId: id
+            }
         });
-        return deletedUMKM;
-    } catch (error) {
-        console.error("Error deleting UMKM:", error);
-        throw error;
+
+        const deletedUMKM = await prisma.uMKM.delete({
+            where: {
+                id: id
+            }
+        });
+        return { message: "UMKM berhasil dihapus." };
+    } catch (error: any) {
+        return { message: "Error deleting UMKM:", error: error.message };
     }
 };
