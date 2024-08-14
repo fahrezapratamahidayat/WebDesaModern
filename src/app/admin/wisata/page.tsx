@@ -1,11 +1,12 @@
 import { RoleGate } from "@/components/auth/role-gate";
-import AdminArtikelPage from "@/components/pages/admin-artikel";
+import AdminWisataPage from "@/components/pages/admin-wisata";
 import { Role } from "@prisma/client";
+import React from "react";
 
-export default function Page() {
+export default function PageUmkm() {
   return (
     <RoleGate allowedRole={Role.Admin}>
-      <AdminArtikelPage />
+        <AdminWisataPage />
     </RoleGate>
   );
 }
