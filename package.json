@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "env NODE_ENV=development next dev",
+    "dev": "next dev",
     "migrate:mysql": "dotenv -e .env.development -- npx prisma migrate dev --name init",
     "push:mysql": "dotenv -e .env.development -- npx prisma db push",
     "studio": "dotenv -e .env.development -- npx prisma studio",
