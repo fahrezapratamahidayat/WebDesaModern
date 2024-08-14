@@ -91,3 +91,26 @@ model GambarGaleri {
   keterangan String
   createdAt  DateTime @default(now())
 }
+
+model WisataDesa {
+  id         String   @id @default(uuid())
+  nama       String   @db.VarChar(255)
+  deskripsi  String   @db.Text
+  lokasi     String   @db.VarChar(255)
+  alamat     String   @db.VarChar(255)
+  telepon    String   @db.VarChar(255)
+  email      String?
+  website    String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  GambarWisataGaleri  GambarWisataGaleri[]
+}
+
+model GambarWisataGaleri {
+  id         String   @id @default(uuid())
+  wisataDesa WisataDesa @relation(fields: [wisataDesaId], references: [id])
+  wisataDesaId String
+  url        String
+  keterangan String?
+  createdAt  DateTime @default(now())
+}
