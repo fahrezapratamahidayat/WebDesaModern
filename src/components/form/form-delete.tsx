@@ -5,41 +5,52 @@ import {
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
-  AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { useUMKMStore } from "@/hooks/use-umkm-store";
 import { TrashIcon, XCircleIcon, CheckCircleIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
-import sonner, { toast } from "sonner";
+import { toast } from "sonner";
 
-export default function FormDelete() {
-  const { isDialogOpen, formMode, closeDialog, deletingUMKM } = useUMKMStore();
+interface FormDeleteProps {
+  isOpen: boolean;
+  onClose: () => void;
+  itemToDelete: {
+    id: string | number;
+    name: string;
+  };
+  entityName: string;
+  apiEndpoint: string;
+}
 
+export default function FormDelete({
+  isOpen,
+  onClose,
+  itemToDelete,
+  entityName,
+  apiEndpoint,
+}: FormDeleteProps) {
   function handleDelete() {
-    if (deletingUMKM?.id) {
+    if (itemToDelete?.id) {
       toast.promise(
         axios.delete(
-          `${process.env.NEXT_PUBLIC_API_URL}/umkm?id=${deletingUMKM.id}`
+          `${process.env.NEXT_PUBLIC_API_URL}${apiEndpoint}?id=${itemToDelete.id}`
         ),
         {
-          loading: "Deleting UMKM...",
-          success: (data) => {
-            closeDialog();
-            return `${deletingUMKM.nama || "UMKM"} berhasil dihapus`;
+          loading: `Deleting ${entityName}...`,
+          success: () => {
+            onClose();
+            return `${itemToDelete.name || entityName} berhasil dihapus`;
           },
-          error: "Gagal menghapus UMKM",
+          error: `Gagal menghapus ${entityName}`,
         }
       );
     }
   }
+
   return (
-    <AlertDialog
-      open={formMode === "delete" && isDialogOpen}
-      onOpenChange={closeDialog}
-    >
+    <AlertDialog open={isOpen} onOpenChange={onClose}>
       <AlertDialogContent className="sm:max-w-[500px]">
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center justify-center flex-col gap-2">
@@ -52,7 +63,7 @@ export default function FormDelete() {
             Apakah anda yakin ingin menghapus data ini ?
             <span className="font-semibold">
               {" "}
-              &quot;{deletingUMKM?.nama}&quot;{" "}
+              &quot;{itemToDelete?.name}&quot;{" "}
             </span>
             Aksi ini tidak dapat dikembalikan.
           </AlertDialogDescription>
@@ -61,7 +72,7 @@ export default function FormDelete() {
           <AlertDialogCancel asChild>
             <Button
               variant="outline"
-              className="text-white w-full flex items-center justify-center gap-2"
+              className="w-full flex items-center justify-center gap-2"
             >
               <XCircleIcon className="h-4 w-4" />
               Tidak Simpan
@@ -70,7 +81,7 @@ export default function FormDelete() {
           <AlertDialogAction asChild>
             <Button
               variant="destructive"
-              className="text-white w-full items-center justify-center gap-2"
+              className="w-full items-center justify-center gap-2"
               onClick={handleDelete}
             >
               <CheckCircleIcon className="h-4 w-4" />
