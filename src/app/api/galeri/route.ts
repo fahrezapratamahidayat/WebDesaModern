@@ -6,7 +6,7 @@ import { createNewGaleri, getGambarGaleri } from "@/services/galeri";
 export async function POST(req: NextRequest) {
     try {
         const formData = await req.formData();
-        const keterangan = formData.get('keterangan') as string; 
+        const umkmData = JSON.parse(formData.get('galeri') as string);
         const files = formData.getAll('gambar') as File[];
 
         if (!files || files.length === 0) {
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
 
             return {
                 url: `/uploads/galeri/${fileName}`,
-                keterangan: keterangan || `Image ${index + 1}` 
+                keterangan: umkmData.keterangan || `Image ${index + 1}`, 
             };
         }));
 
