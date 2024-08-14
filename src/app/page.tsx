@@ -10,6 +10,7 @@ import KontakDesaSection from "@/components/pages/kontak-page";
 import FooterSection from "@/components/pages/footer-page";
 import LayananDesaSection from "@/components/pages/layanan-page";
 import UmkmSection from "@/components/pages/umkm-section-page";
+import WisataSection from "@/components/pages/wisata-section";
 
 export default function Home() {
   return (
@@ -21,6 +22,7 @@ export default function Home() {
       <LayananDesaSection />
       <GallerySection />
       <UmkmSection />
+      <WisataSection />
       <KegiatanSection />
       <ArtikelDesaSection />
       <KontakDesaSection />
