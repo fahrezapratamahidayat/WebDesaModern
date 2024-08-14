@@ -70,7 +70,9 @@ export async function PUT(req: NextRequest) {
         const formData = await req.formData();
         const umkmData = JSON.parse(formData.get('umkmData') as string);
         const files = formData.getAll('gambar') as File[];
-        const data = await updateUMKM(id, umkmData);
+        const deletedImageIds = JSON.parse(formData.get('deletedImageIds') as string || '[]');
+
+        const data = await updateUMKM(id, umkmData, files, deletedImageIds);
         return NextResponse.json(data);
     } catch (error) {
         console.error("Error handling PUT request:", error);
@@ -81,7 +83,6 @@ export async function PUT(req: NextRequest) {
 export async function DELETE(req: NextRequest) {
     try {
         const id = req.nextUrl.searchParams.get('id');
-        console.log(id)
         if (!id) {
             return NextResponse.json({ error: "ID UMKM diperlukan." }, { status: 400 });
         }
