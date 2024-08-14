@@ -34,6 +34,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useSWRConfig } from "swr";
 
 const formSchema = z.object({
   keterangan: z.string().min(10, {
@@ -53,9 +54,11 @@ export function GaleriForm() {
       gambar: [],
     },
   });
+  const { mutate } = useSWRConfig();
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const formData = new FormData();
+    console.log(values);
 
     formData.append(
       "galeri",
@@ -69,27 +72,38 @@ export function GaleriForm() {
     });
 
     try {
-      const response = await axios.post(
-        "http://localhost:3000/api/galeri",
-        formData,
-        {
+      const url = "http://localhost:3000/api/galeri";
+      const method = "POST";
+      toast.promise(
+        axios({
+          url,
+          method,
+          data: formData,
           headers: {
             "Content-Type": "multipart/form-data",
           },
+        }),
+        {
+          loading: "Loading",
+          success: "Berhasil",
+          error: "gagal dibuat",
         }
       );
-
-      toast.success("berhasil dibuat");
+      setLoading(false);
+      form.reset();
+      mutate("/api/galeri");
+      setOpen(false);
     } catch (error: AxiosError | any) {
-      toast("gagal dibuat");
+      toast.error(`Gagal ${error.response?.data.message || error.message}`);
+      setLoading(false);
     }
   }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="text-white font-medium">
-          <Plus className="mr-2 h-4 w-4 text-white" />
+        <Button className=" font-medium">
+          <Plus className="mr-2 h-4 w-4 " />
           Tambah Galeri Desa
         </Button>
       </DialogTrigger>
@@ -149,12 +163,12 @@ export function GaleriForm() {
                 </div>
               </div>
               {loading ? (
-                <Button className="w-full text-white" type="submit" disabled>
+                <Button className="w-full " type="submit" disabled>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Loading
                 </Button>
               ) : (
-                <Button type="submit" className="w-full text-white">
+                <Button type="submit" className="w-full ">
                   Tambah UMKM
                 </Button>
               )}

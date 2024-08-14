@@ -3,7 +3,7 @@ import { PrismaClient, GambarGaleri } from "@prisma/client";
 const prisma = new PrismaClient()
 
 export const createNewGaleri = async (
-    gambarGaleri: { url: string; keterangan?: string }[]
+    gambarGaleri: { url: string; keterangan: string }[]
 ): Promise<GambarGaleri[]> => {
     try {
         const newGaleriEntries = await Promise.all(gambarGaleri.map(gambar =>

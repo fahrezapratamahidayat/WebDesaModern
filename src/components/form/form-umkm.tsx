@@ -3,15 +3,8 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Loader2, Plus } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { Loader2 } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -37,6 +30,7 @@ import {
 import { UMKM } from "@prisma/client";
 import { useUMKMStore } from "@/hooks/use-umkm-store";
 import { UploadedFilesCard } from "../card/uploaded-files-card";
+import { useSWRConfig } from "swr";
 
 const formSchema = z.object({
   nama: z.string().min(2, {
@@ -78,9 +72,10 @@ const formSchema = z.object({
 });
 
 export function UMKMForm() {
-  const { isDialogOpen, formMode, editingUMKM, closeDialog } = useUMKMStore();
+  const { isDialogOpen, formMode, editingUMKM, closeDialog, setEditingUMKM } = useUMKMStore();
   const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
+  const [deletedImageIds, setDeletedImageIds] = useState<string[]>([]);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -92,10 +87,18 @@ export function UMKMForm() {
       telepon: "",
       email: "",
       website: "",
-      gambar: [],
     },
   });
-
+  const { mutate } = useSWRConfig();
+  const handleImageDelete = (imageId: string) => {
+    setDeletedImageIds(prev => [...prev, imageId]);
+    if (editingUMKM && editingUMKM.GambarUMKM) {
+      setEditingUMKM({
+        ...editingUMKM,
+        GambarUMKM: editingUMKM.GambarUMKM.filter(img => img.id !== imageId)
+      });
+    }
+  };
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
     const formData = new FormData();
@@ -120,6 +123,8 @@ export function UMKMForm() {
       formData.append("gambar", file);
     });
 
+    formData.append('deletedImageIds', JSON.stringify(deletedImageIds));
+
     try {
       const url = `http://localhost:3000/api/umkm${formMode === "update" ? `?id=${editingUMKM?.id}` : ""}`;
       const method = formMode === "update" ? "PUT" : "POST";
@@ -141,6 +146,7 @@ export function UMKMForm() {
       );
       setLoading(false);
       closeDialog();
+      mutate("/umkm");
     } catch (error: AxiosError | any) {
       toast.error(
         `Gagal ${formMode === "update" ? "memperbarui" : "membuat"} UMKM`
@@ -196,7 +202,7 @@ export function UMKMForm() {
                     name="jenisUsaha"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Email</FormLabel>
+                        <FormLabel>Jenis Usaha</FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           defaultValue={field.value}
@@ -369,17 +375,18 @@ export function UMKMForm() {
                           name: img.id,
                         })
                       )}
+                      onDelete={handleImageDelete}
                     />
                   )}
                 </div>
               </div>
               {loading ? (
-                <Button className="w-full text-white" type="submit" disabled>
+                <Button className="w-full " type="submit" disabled>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Loading
                 </Button>
               ) : (
-                <Button type="submit" className="w-full text-white">
+                <Button type="submit" className="w-full ">
                   {formMode === "create" ? "Tambah UMKM" : "Update UMKM"}
                 </Button>
               )}

@@ -1,6 +1,8 @@
 // services/umkm.ts
 
 import { PrismaClient, UMKM, GambarUMKM } from "@prisma/client";
+import { writeFile, mkdir, unlink } from 'fs/promises';
+import path from 'path';
 
 const prisma = new PrismaClient();
 
@@ -53,39 +55,62 @@ export const createUMKM = async (
     }
 };
 
-// export const updateUMKM = async (id: string, data: Partial<UMKM>): Promise<UMKM> => {
-//     try {
-//         const updatedUMKM = await prisma.uMKM.update({
-//             where: { id },
-//             data,
-//             include: { GambarUMKM: true },
-//         });
-//         return updatedUMKM;
-//     } catch (error) {
-//         console.error("Error updating UMKM:", error);
-//         throw error;
-//     }
-// };
-export async function updateUMKM(id: string, data: any, newGambarUMKM: any[] = []) {
+export async function updateUMKM(id: string, data: any, newFiles: File[], deletedImageIds: string[]) {
     try {
-        const updatedUMKM = await prisma.uMKM.update({
-            where: { id: id },
-            data: {
-                ...data,
-                GambarUMKM: {
-                    create: newGambarUMKM
-                }
-            },
-            include: {
-                GambarUMKM: true
-            }
+      const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'umkm');
+      await mkdir(uploadDir, { recursive: true });
+  
+      const newGambarUMKM = await Promise.all(newFiles.map(async (file) => {
+        const bytes = await file.arrayBuffer();
+        const buffer = Buffer.from(bytes);
+  
+        const fileName = `${Date.now()}-${file.name.replace(/\s/g, '_')}`;
+        const filePath = path.join(uploadDir, fileName);
+  
+        await writeFile(filePath, buffer);
+  
+        return {
+          url: `/uploads/umkm/${fileName}`,
+          keterangan: `New Image`,
+        };
+      }));
+  
+      if (deletedImageIds.length > 0) {
+        await prisma.gambarUMKM.deleteMany({
+          where: {
+            id: { in: deletedImageIds },
+            umkmId: id
+          }
         });
-        return updatedUMKM;
+  
+        for (const imageId of deletedImageIds) {
+          const image = await prisma.gambarUMKM.findUnique({ where: { id: imageId } });
+          if (image) {
+            const filePath = path.join(process.cwd(), 'public', image.url);
+            await unlink(filePath);
+          }
+        }
+      }
+  
+      const updatedUMKM = await prisma.uMKM.update({
+        where: { id: id },
+        data: {
+          ...data,
+          GambarUMKM: {
+            create: newGambarUMKM
+          }
+        },
+        include: {
+          GambarUMKM: true
+        }
+      });
+  
+      return updatedUMKM;
     } catch (error) {
-        console.error("Error updating UMKM:", error);
-        throw error;
+      console.error("Error updating UMKM:", error);
+      throw error;
     }
-}
+  }
 
 export const deleteUMKM = async (id: string) => {
     try {

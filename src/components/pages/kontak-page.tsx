@@ -8,7 +8,7 @@ import { Phone, Mail, MapPin, Send } from "lucide-react";
 
 export default function KontakDesaSection() {
   return (
-    <section id="kontak" className="container mx-auto py-12">
+    <section id="kontak" className="scroll-mt-[2rem] flex flex-col lg:px-32 px-6 gap-6 mt-32">
       <h1 className="text-3xl font-bold tracking-tight mb-8">Hubungi Kami</h1>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <Card>
@@ -41,7 +41,7 @@ export default function KontakDesaSection() {
               <Input type="email" placeholder="Alamat Email" />
               <Input placeholder="Subjek" />
               <Textarea placeholder="Pesan Anda" className="h-32" />
-              <Button className="w-full text-white">
+              <Button className="w-full">
                 Kirim Pesan
                 <Send className="w-4 h-4 ml-2" />
               </Button>

@@ -89,7 +89,7 @@ export function KegiatanDesaForm() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="default" className="text-white">
+        <Button variant="default" className="">
           <Plus className="mr-2 h-4 w-4" /> Tambah Kegiatan Desa
         </Button>
       </DialogTrigger>

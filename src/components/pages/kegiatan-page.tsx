@@ -55,7 +55,7 @@ export default function KegiatanSection() {
   return (
     <section
       id="kegiatan"
-      className="scroll-mt-[2rem] flex flex-col lg:px-32 px-6 min-h-screen gap-8 mt-96 lg:mt-32"
+      className="scroll-mt-[2rem] flex flex-col lg:px-32 px-6 gap-8 mt-96 "
     >
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold tracking-tight">

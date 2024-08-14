@@ -57,7 +57,7 @@ export default function ArtikelDesaSection() {
     );
 
   return (
-    <section id="artikel" className="container mx-auto py-12">
+    <section id="artikel" className="scroll-mt-[2rem] flex flex-col lg:px-32 px-6 gap-6 mt-96 lg:mt-32">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold tracking-tight">
           Artikel Desa Karyamekar

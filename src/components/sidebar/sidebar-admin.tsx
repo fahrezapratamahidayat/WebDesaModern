@@ -15,7 +15,7 @@ import {
   CalendarIcon,
   HamburgerMenuIcon,
 } from "@radix-ui/react-icons";
-import { ArrowLeft, ArrowRight, GalleryHorizontal, GalleryThumbnails, LogOutIcon, Package2 } from "lucide-react";
+import { ArrowLeft, ArrowRight, GalleryHorizontal, GalleryThumbnails, TentTree ,LogOutIcon, Package2 } from "lucide-react";
 import { signOut } from "next-auth/react";
 
 export default function SidebarAdmin() {
@@ -28,6 +28,7 @@ export default function SidebarAdmin() {
     { icon: CalendarIcon, label: "Kegiatan", href: "/admin/kegiatan" },
     { icon: HamburgerMenuIcon, label: "UMKM", href: "/admin/umkm" },
     { icon: GalleryThumbnails, label: "Galeri", href: "/admin/galeri" },
+    {icon: TentTree, label: "Wisata", href: "/admin/wisata"},
   ];
 
   return (
@@ -56,9 +57,9 @@ export default function SidebarAdmin() {
                 {" "}
                 <Link key={item.href} href={item.href}>
                   <div
-                    className={`inline-flex items-center whitespace-nowrap rounded-md ${pathname === item.href ? "bg-primary text-primary-foreground hover:bg-primary/90" : "hover:bg-primary/50"} h-10 px-4 py-2 font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 w-full justify-start text-white text-sm ${isSidebarOpen ? "" : ""}`}
+                    className={`inline-flex items-center whitespace-nowrap rounded-md ${pathname === item.href ? "bg-primary text-primary-foreground hover:bg-primary/90" : "hover:bg-primary/50"} h-10 px-4 py-2 font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 w-full justify-start  text-sm ${isSidebarOpen ? "" : ""}`}
                   >
-                    <item.icon className="h-5 w-5 text-white" />
+                    <item.icon className="h-5 w-5 " />
                     {isSidebarOpen && (
                       <span className="ml-2">{item.label}</span>
                     )}
@@ -78,9 +79,9 @@ export default function SidebarAdmin() {
               <Button
                 onClick={() => signOut()}
                 variant={"ghost"}
-                className={`w-full justify-start text-white text-sm ${isSidebarOpen ? "" : ""}`}
+                className={`w-full justify-start  text-sm ${isSidebarOpen ? "" : ""}`}
               >
-                <LogOutIcon className="h-5 w-5 text-white" />
+                <LogOutIcon className="h-5 w-5 " />
                 {isSidebarOpen && <span className="ml-2">Log out</span>}
               </Button>
             </TooltipTrigger>

@@ -51,7 +51,6 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { GaleriForm } from "../form/form-galeri";
 
-// Define the GambarGaleri type
 type GambarGaleri = {
   id: string;
   url: string;
@@ -70,6 +69,7 @@ export const columns: ColumnDef<GambarGaleri>[] = [
             href={row.getValue("url")}
             target="_blank"
             rel="noopener noreferrer"
+            className="text-blue-500 hover:text-blue-700 transition-colors duration-300"
           >
             {row.getValue("url")}
           </a>
@@ -81,7 +81,12 @@ export const columns: ColumnDef<GambarGaleri>[] = [
     accessorKey: "keterangan",
     header: "Keterangan",
     cell: ({ row }) => {
-      return <div>{row.getValue("keterangan")}</div>;
+      return (
+        <div>
+          {row &&
+            (row.getValue("keterangan") as string).substring(0, 20) + "..."}
+        </div>
+      );
     },
   },
   {
@@ -90,6 +95,7 @@ export const columns: ColumnDef<GambarGaleri>[] = [
       return (
         <Button
           variant="ghost"
+          className=""
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Tanggal Dibuat
@@ -99,7 +105,7 @@ export const columns: ColumnDef<GambarGaleri>[] = [
     },
     cell: ({ row }) => {
       return (
-        <div>
+        <div className="ml-8">
           {new Date(row.getValue("createdAt")).toLocaleDateString("id-ID")}
         </div>
       );
@@ -179,108 +185,113 @@ export default function TableGambarGaleri<TData extends GambarGaleri, TValue>({
   });
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Galeri Gambar</CardTitle>
-        <CardDescription>
-          Kelola gambar-gambar dalam galeri Anda.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="flex items-center py-4">
-          <Input
-            placeholder="Cari gambar..."
-            value={
-              (table.getColumn("keterangan")?.getFilterValue() as string) ?? ""
-            }
-            onChange={(event) =>
-              table.getColumn("keterangan")?.setFilterValue(event.target.value)
-            }
-            className="max-w-sm"
-          />
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="lg:ml-auto">
-                Columns <ChevronDown className="w-4 h-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className={cn(`capitalize`, {})}
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  );
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <div className="flex items-center">
-            <GaleriForm />
+    <>
+      <Card>
+        <CardHeader>
+          <CardTitle>Galeri Gambar</CardTitle>
+          <CardDescription>
+            Kelola gambar-gambar dalam galeri Anda.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center py-4 flex-wrap gap-2">
+            <Input
+              placeholder="Cari gambar..."
+              value={
+                (table.getColumn("keterangan")?.getFilterValue() as string) ??
+                ""
+              }
+              onChange={(event) =>
+                table
+                  .getColumn("keterangan")
+                  ?.setFilterValue(event.target.value)
+              }
+              className="max-w-sm"
+            />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="lg:ml-auto">
+                  Columns <ChevronDown className="w-4 h-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {table
+                  .getAllColumns()
+                  .filter((column) => column.getCanHide())
+                  .map((column) => {
+                    return (
+                      <DropdownMenuCheckboxItem
+                        key={column.id}
+                        className={cn(`capitalize`, {})}
+                        checked={column.getIsVisible()}
+                        onCheckedChange={(value) =>
+                          column.toggleVisibility(!!value)
+                        }
+                      >
+                        {column.id}
+                      </DropdownMenuCheckboxItem>
+                    );
+                  })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <div className="flex items-center">
+              <GaleriForm />
+            </div>
           </div>
-        </div>
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
+          <Table>
+            <TableHeader>
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead key={header.id}>
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    );
+                  })}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </CardContent>
-      <div className="flex items-center justify-end space-x-2 py-4">
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
+      <div className="flex justify-end items-center py-4 space-x-2">
         <div className="flex-1 text-sm text-muted-foreground">
-          {table.getFilteredSelectedRowModel().rows.length} of{" "}
-          {table.getFilteredRowModel().rows.length} row(s) selected.
+          Menampilkan <strong>{table.getFilteredRowModel().rows.length}</strong>{" "}
+          UMKM
         </div>
         <div className="space-x-2">
           <Button
@@ -301,6 +312,6 @@ export default function TableGambarGaleri<TData extends GambarGaleri, TValue>({
           </Button>
         </div>
       </div>
-    </Card>
+    </>
   );
 }

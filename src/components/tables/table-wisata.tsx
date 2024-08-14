@@ -5,6 +5,7 @@ import {
   Edit2,
   EyeIcon,
   MoreHorizontal,
+  Plus,
   Trash2,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -47,26 +48,31 @@ import React, { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { KegiatanDesa } from "@prisma/client";
-import { KegiatanDesaForm } from "../form/form-kegiatan";
+import { GambarWisataGaleri, WisataDesa } from "@prisma/client";
+import { WisataDesaForm } from "../form/form-wisata";
+import FormDelete from "../form/form-delete";
+import { useWisataStore } from "@/hooks/use-wisata-store";
 
-export const columns: ColumnDef<KegiatanDesa>[] = [
+interface WisataDesaWithGambar extends WisataDesa {
+  GambarWisataGaleri: GambarWisataGaleri[];
+}
+export const columns: ColumnDef<WisataDesaWithGambar>[] = [
   {
     accessorKey: "nama",
-    header: ({ column }) => <div className="">Nama Kegiatan</div>,
+    header: ({ column }) => <div className="">Nama Wisata</div>,
     cell: ({ row }) => {
       return <div className="font-medium">{row.getValue("nama")}</div>;
     },
   },
   {
-    accessorKey: "jenis",
-    header: ({ column }) => <div className="">Jenis Kegiatan</div>,
+    accessorKey: "lokasi",
+    header: ({ column }) => <div className="">Lokasi</div>,
     cell: ({ row }) => {
-      return <Badge variant="outline">{row.getValue("jenis")}</Badge>;
+      return <Badge variant="outline">{row.getValue("lokasi")}</Badge>;
     },
   },
   {
-    accessorKey: "tanggal",
+    accessorKey: "createdAt",
     header: ({ column, table }) => {
       return (
         <Button
@@ -76,7 +82,7 @@ export const columns: ColumnDef<KegiatanDesa>[] = [
             table.setSorting([{ id: column.id, desc: isSortedAsc }]);
           }}
         >
-          Tanggal
+          Tanggal Dibuat
           <ArrowUpDown
             className={`ml-2 w-4 h-4 ${
               column.getIsSorted()
@@ -90,39 +96,21 @@ export const columns: ColumnDef<KegiatanDesa>[] = [
       );
     },
     cell: ({ row }) => {
-      const tanggal = new Date(row.getValue("tanggal"));
+      const createdAt = new Date(row.getValue("createdAt"));
       return (
         <div className="p-4 align-middle [&:has([role=checkbox])]:pr-0 hidden sm:table-cell">
-          {tanggal.toLocaleDateString("id-ID")}
+          {createdAt.toLocaleDateString("id-ID")}
         </div>
       );
     },
   },
   {
-    accessorKey: "waktu",
-    header: () => <div className="hidden sm:table-cell">Waktu</div>,
-    cell: ({ row }) => {
-      return (
-        <div className="hidden sm:table-cell">{row.getValue("waktu")}</div>
-      );
-    },
-  },
-  {
-    accessorKey: "lokasi",
-    header: () => <div className="hidden sm:table-cell">Lokasi</div>,
-    cell: ({ row }) => {
-      return (
-        <div className="hidden sm:table-cell">{row.getValue("lokasi")}</div>
-      );
-    },
-  },
-  {
-    accessorKey: "postedBy",
-    header: () => <div className="hidden sm:table-cell">Penulis</div>,
+    accessorKey: "telepon",
+    header: () => <div className="hidden sm:table-cell">Telepon</div>,
     cell: ({ row }) => {
       return (
         <div className="hidden font-medium sm:table-cell">
-          {row.getValue("postedBy")}
+          {row.getValue("telepon")}
         </div>
       );
     },
@@ -132,8 +120,12 @@ export const columns: ColumnDef<KegiatanDesa>[] = [
     id: "actions",
     enableHiding: false,
     cell: ({ row }) => {
-      const kegiatan = row.original;
-      const kegiatanId = kegiatan.id;
+      const wisata = row.original;
+      const wisataId = wisata.id;
+      const { openDeleteDialog, seteditingWisata } =
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        useWisataStore();
+
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -148,13 +140,13 @@ export const columns: ColumnDef<KegiatanDesa>[] = [
               <EyeIcon className="mr-2 w-4 h-4" />
               Lihat
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => seteditingWisata(wisata)}>
               <Edit2 className="mr-2 w-4 h-4" />
-              Edit kegiatan
+              Edit wisata
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => openDeleteDialog(wisata)}>
               <Trash2 className="mr-2 w-4 h-4" />
-              Hapus kegiatan
+              Hapus wisata
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -168,19 +160,25 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
-export default function TableKegiatanDesa<TData extends KegiatanDesa, TValue>({
+export default function TableWisata<TData extends WisataDesa, TValue>({
   data,
   columns,
 }: DataTableProps<TData, TValue>) {
-  const [kegiatanId, setKegiatanId] = useState<number>(0);
-  const [selectedKegiatan, setSelectedKegiatan] = useState({} as KegiatanDesa);
-
-  const { toast } = useToast();
+  const [wisataId, setWisataId] = useState<string>("");
+  const [selectedWisata, setSelectedWisata] = useState({} as WisataDesa);
+  const {
+    formMode,
+    openCreateDialog,
+    isDialogOpen,
+    deletingWisata,
+    closeDialog,
+  } = useWisataStore();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
   );
-  const [jenisFilter, setJenisFilter] = useState("");
+
+  const [statusFilter, setStatusFilter] = useState("");
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
@@ -206,17 +204,18 @@ export default function TableKegiatanDesa<TData extends KegiatanDesa, TValue>({
 
   return (
     <>
+    <WisataDesaForm />
       <Card>
         <CardHeader>
-          <CardTitle>Kegiatan Desa</CardTitle>
+          <CardTitle>Wisata Desa</CardTitle>
           <CardDescription>
-            Kelola Kegiatan Desa Anda dan lihat informasi terkait.
+            Kelola Wisata Desa Anda dan lihat informasi terkait.
           </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-wrap gap-2 pb-4 lg:flex-row lg:items-center">
             <Input
-              placeholder="Cari Kegiatan disini ..."
+              placeholder="Cari Wisata disini ..."
               value={(table.getState().globalFilter as string) ?? ""}
               onChange={(event) => {
                 const value = event.target.value;
@@ -250,42 +249,10 @@ export default function TableKegiatanDesa<TData extends KegiatanDesa, TValue>({
                   })}
               </DropdownMenuContent>
             </DropdownMenu>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="">
-                  Filter Jenis <ChevronDown className="ml-2 w-4 h-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuItem onSelect={() => setJenisFilter("")}>
-                  <DropdownMenuCheckboxItem
-                    onCheckedChange={() => setJenisFilter("")}
-                    checked={jenisFilter === ""}
-                  >
-                    Semua
-                  </DropdownMenuCheckboxItem>
-                </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => setJenisFilter("Pendidikan")}>
-                  <DropdownMenuCheckboxItem
-                    onCheckedChange={() => setJenisFilter("Pendidikan")}
-                    checked={jenisFilter === "Pendidikan"}
-                  >
-                    Pendidikan
-                  </DropdownMenuCheckboxItem>
-                </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => setJenisFilter("Kesehatan")}>
-                  <DropdownMenuCheckboxItem
-                    onCheckedChange={() => setJenisFilter("Kesehatan")}
-                    checked={jenisFilter === "Kesehatan"}
-                  >
-                    Kesehatan
-                  </DropdownMenuCheckboxItem>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <div className="flex items-center">
-              <KegiatanDesaForm />
-            </div>
+            <Button onClick={openCreateDialog} className=" font-medium">
+              <Plus className="mr-2 h-4 w-4 " />
+              Tambah Wisata
+            </Button>
           </div>
           <Table>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -325,7 +292,7 @@ export default function TableKegiatanDesa<TData extends KegiatanDesa, TValue>({
                 <TableRow>
                   <TableCell
                     colSpan={columns.length}
-                    className="h-80 text-center"
+                    className="h-96 text-center"
                   >
                     <div className="flex justify-center flex-col gap-5 items-center h-full py-5">
                       <svg
@@ -388,10 +355,20 @@ export default function TableKegiatanDesa<TData extends KegiatanDesa, TValue>({
           </Table>
         </CardContent>
       </Card>
+      <FormDelete
+        isOpen={formMode === "delete" && isDialogOpen}
+        onClose={closeDialog}
+        itemToDelete={{
+          id: deletingWisata?.id || "",
+          name: deletingWisata?.nama || "",
+        }}
+        entityName="Wisata Desa"
+        apiEndpoint="/wisata"
+      />
       <div className="flex justify-end items-center py-4 space-x-2">
         <div className="flex-1 text-sm text-muted-foreground">
           Menampilkan
-          <strong> {table.getFilteredRowModel().rows.length}</strong> kegiatan
+          <strong> {table.getFilteredRowModel().rows.length}</strong> wisata
         </div>
         <div className="space-x-2">
           <Button

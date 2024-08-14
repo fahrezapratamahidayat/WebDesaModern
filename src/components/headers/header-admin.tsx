@@ -1,9 +1,13 @@
-'use client'
+"use client";
 import Image from "next/image";
 import Link from "next/link";
 import {
+  CalendarIcon,
+  FileTextIcon,
+  GalleryThumbnails,
   Home,
   LineChart,
+  LogOutIcon,
   Package,
   Package2,
   PanelLeft,
@@ -32,9 +36,26 @@ import {
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { usePathname } from "next/navigation";
+import SidebarAdmin from "../sidebar/sidebar-admin";
+import { HamburgerMenuIcon } from "@radix-ui/react-icons";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
+import { signOut } from "next-auth/react";
 
 export function HeaderAdmin() {
-  const pathname = usePathname()
+  const pathname = usePathname();
+  const menuItems = [
+    { icon: Package2, label: "Dashboard", href: "/admin/dashboard" },
+    { icon: FileTextIcon, label: "Artikel", href: "/admin/artikel" },
+    { icon: CalendarIcon, label: "Kegiatan", href: "/admin/kegiatan" },
+    { icon: HamburgerMenuIcon, label: "UMKM", href: "/admin/umkm" },
+    { icon: GalleryThumbnails, label: "Galeri", href: "/admin/galeri" },
+  ];
+
   return (
     <header className="sticky top-0 z-30 flex h-14 items-center gap-4 border-b bg-background px-4 sm:static sm:h-auto sm:border-0 sm:bg-transparent sm:px-6">
       <Sheet>
@@ -45,49 +66,45 @@ export function HeaderAdmin() {
           </Button>
         </SheetTrigger>
         <SheetContent side="left" className="sm:max-w-xs">
-          <nav className="grid gap-6 text-lg font-medium">
-            <Link
-              href="#"
-              className="group flex h-10 w-10 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold  md:text-base"
-            >
-              <Package2 className="h-5 w-5 transition-all group-hover:scale-110" />
-              <span className="sr-only">Acme Inc</span>
-            </Link>
-            <Link
-              href="#"
-              className="flex items-center gap-4 px-2.5 hover:text-foreground"
-            >
-              <Home className="h-5 w-5" />
-              Dashboard
-            </Link>
-            <Link
-              href="#"
-              className="flex items-center gap-4 px-2.5 text-foreground"
-            >
-              <ShoppingCart className="h-5 w-5" />
-              Orders
-            </Link>
-            <Link
-              href="#"
-              className="flex items-center gap-4 px-2.5 hover:text-foreground"
-            >
-              <Package className="h-5 w-5" />
-              Products
-            </Link>
-            <Link
-              href="#"
-              className="flex items-center gap-4 px-2.5 hover:text-foreground"
-            >
-              <Users2 className="h-5 w-5" />
-              Customers
-            </Link>
-            <Link
-              href="#"
-              className="flex items-center gap-4 px-2.5 hover:text-foreground"
-            >
-              <LineChart className="h-5 w-5" />
-              Settings
-            </Link>
+          <nav className="flex flex-col gap-4 px-2 sm:py-5">
+            {menuItems.map((item) => (
+              <TooltipProvider key={item.label}>
+                <Tooltip>
+                  <TooltipTrigger>
+                    {" "}
+                    <Link key={item.href} href={item.href}>
+                      <div
+                        className={`inline-flex items-center whitespace-nowrap rounded-md ${pathname === item.href ? "bg-primary text-primary-foreground hover:bg-primary/90" : "hover:bg-primary/50"} h-10 px-4 py-2 font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 w-full justify-start  text-sm`}
+                      >
+                        <item.icon className="h-5 w-5 " />
+                        <span className="ml-2">{item.label}</span>
+                      </div>
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{item.label}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ))}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  {" "}
+                  <Button
+                    onClick={() => signOut()}
+                    variant={"ghost"}
+                    className={`w-full justify-start text-sm `}
+                  >
+                    <LogOutIcon className="h-5 w-5 " />
+                    <span className="ml-2">Log out</span>
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Log out</p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </nav>
         </SheetContent>
       </Sheet>
