@@ -34,15 +34,26 @@ model User {
 }
 
 model ArticleDesa {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  judul     String   @db.VarChar(255)
-  kategori  String   @db.VarChar(255)
-  tanggal   DateTime
-  penulis   User     @relation(fields: [penulisId], references: [id])
-  penulisId Int
-  ringkasan String   @db.Text
+  id         Int           @id @default(autoincrement())
+  createdAt  DateTime      @default(now())
+  updatedAt  DateTime      @updatedAt
+  judul      String        @db.VarChar(255)
+  slug       String        @unique @db.VarChar(255)
+  isi        String        @db.LongText
+  kategori   String        @db.VarChar(255)
+  tanggal    DateTime
+  penulis    User          @relation(fields: [penulisId], references: [id])
+  penulisId  Int
+  ringkasan  String        @db.Text
+  gambarUrl  String?       @db.VarChar(255)
+  urlArtikel String?       @db.VarChar(255)
+  status     StatusArtikel @default(Draft)
+}
+
+enum StatusArtikel {
+  Draft
+  Publikasi
+  Arsip
 }
 
 model KegiatanDesa {
@@ -63,10 +74,10 @@ model KegiatanDesa {
 model UMKM {
   id          String       @id @default(uuid())
   nama        String
-  deskripsi   String @db.Text
+  deskripsi   String       @db.Text
   jenisUsaha  String
   produkUtama String
-  keunggulan  String @db.Text
+  keunggulan  String       @db.Text
   alamat      String
   telepon     String
   email       String?
@@ -86,31 +97,31 @@ model GambarUMKM {
 }
 
 model GambarGaleri {
-  id         String @id @default(uuid())
+  id         String   @id @default(uuid())
   url        String
   keterangan String
   createdAt  DateTime @default(now())
 }
 
 model WisataDesa {
-  id         String   @id @default(uuid())
-  nama       String   @db.VarChar(255)
-  deskripsi  String   @db.Text
-  lokasi     String   @db.VarChar(255)
-  alamat     String   @db.VarChar(255)
-  telepon    String   @db.VarChar(255)
-  email      String?
-  website    String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  GambarWisataGaleri  GambarWisataGaleri[]
+  id                 String               @id @default(uuid())
+  nama               String               @db.VarChar(255)
+  deskripsi          String               @db.Text
+  lokasi             String               @db.VarChar(255)
+  alamat             String               @db.VarChar(255)
+  telepon            String               @db.VarChar(255)
+  email              String?
+  website            String?
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  GambarWisataGaleri GambarWisataGaleri[]
 }
 
 model GambarWisataGaleri {
-  id         String   @id @default(uuid())
-  wisataDesa WisataDesa @relation(fields: [wisataDesaId], references: [id])
+  id           String     @id @default(uuid())
+  wisataDesa   WisataDesa @relation(fields: [wisataDesaId], references: [id])
   wisataDesaId String
-  url        String
-  keterangan String?
-  createdAt  DateTime @default(now())
+  url          String
+  keterangan   String?
+  createdAt    DateTime   @default(now())
 }
