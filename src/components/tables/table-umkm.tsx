@@ -141,11 +141,13 @@ export const columns: ColumnDef<UMKMWithGambar>[] = [
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  refreshData: () => void;
 }
 
 export default function TableUMKM<TData extends UMKM, TValue>({
   data,
   columns,
+  refreshData,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
@@ -190,7 +192,7 @@ export default function TableUMKM<TData extends UMKM, TValue>({
 
   return (
     <>
-      <UMKMForm />
+      <UMKMForm refreshData={refreshData} />
       <FormDelete
         isOpen={formMode === "delete" && isDialogOpen}
         onClose={closeDialog}
@@ -200,6 +202,7 @@ export default function TableUMKM<TData extends UMKM, TValue>({
         }}
         entityName="UMKM"
         apiEndpoint="/umkm"
+        refreshData={refreshData}
       />
       <Card>
         <CardHeader>
