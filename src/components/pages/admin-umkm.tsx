@@ -2,16 +2,21 @@
     import axios from "axios";
 import AdminLayout from "../layouts/admin-layout";
 import TableUMKM, { columns } from "../tables/table-umkm";
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 import SidebarSkeleton from "../skeletons/sidebar";
 import { Card, CardContent } from "../ui/card";
 import TableArtikelSkeleton from "../skeletons/table";
 
 
 export default function UMKMPage() {
+  const { mutate } = useSWRConfig();
   const fetcher = async () => {
     const response = await axios.get("/api/umkm");
     return response.data.data;
+  };
+
+  const refreshData = () => {
+    mutate("/umkm");
   };
 
   const { data, error, isLoading } = useSWR("/umkm", fetcher);
@@ -31,7 +36,7 @@ export default function UMKMPage() {
     );
   return (
     <AdminLayout>
-      <TableUMKM data={data} columns={columns} />
+      <TableUMKM data={data} columns={columns} refreshData={refreshData} />
     </AdminLayout>
   );
 }
