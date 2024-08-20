@@ -158,11 +158,13 @@ export const columns: ColumnDef<WisataDesaWithGambar>[] = [
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  refreshData: () => void;
 }
 
 export default function TableWisata<TData extends WisataDesa, TValue>({
   data,
   columns,
+  refreshData,
 }: DataTableProps<TData, TValue>) {
   const [wisataId, setWisataId] = useState<string>("");
   const [selectedWisata, setSelectedWisata] = useState({} as WisataDesa);
@@ -204,7 +206,7 @@ export default function TableWisata<TData extends WisataDesa, TValue>({
 
   return (
     <>
-    <WisataDesaForm />
+    <WisataDesaForm refreshData={refreshData}/>
       <Card>
         <CardHeader>
           <CardTitle>Wisata Desa</CardTitle>
@@ -364,6 +366,7 @@ export default function TableWisata<TData extends WisataDesa, TValue>({
         }}
         entityName="Wisata Desa"
         apiEndpoint="/wisata"
+        refreshData={refreshData}
       />
       <div className="flex justify-end items-center py-4 space-x-2">
         <div className="flex-1 text-sm text-muted-foreground">
