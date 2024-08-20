@@ -22,6 +22,7 @@ interface FormDeleteProps {
   };
   entityName: string;
   apiEndpoint: string;
+  refreshData: () => void;
 }
 
 export default function FormDelete({
@@ -30,6 +31,7 @@ export default function FormDelete({
   itemToDelete,
   entityName,
   apiEndpoint,
+  refreshData,
 }: FormDeleteProps) {
   function handleDelete() {
     if (itemToDelete?.id) {
@@ -41,6 +43,7 @@ export default function FormDelete({
           loading: `Deleting ${entityName}...`,
           success: () => {
             onClose();
+            refreshData();
             return `${itemToDelete.name || entityName} berhasil dihapus`;
           },
           error: `Gagal menghapus ${entityName}`,

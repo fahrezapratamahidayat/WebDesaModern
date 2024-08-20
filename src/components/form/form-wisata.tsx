@@ -60,10 +60,10 @@ const formSchema = z.object({
     })
     .optional()
     .or(z.literal("")),
-  gambar: z.array(z.instanceof(File)),
+  gambar: z.array(z.instanceof(File)).optional(),
 });
 
-export function WisataDesaForm() {
+export function WisataDesaForm({ refreshData }: { refreshData: () => void }) {
   const {
     isDialogOpen,
     formMode,
@@ -115,19 +115,32 @@ export function WisataDesaForm() {
         website: values.website,
       })
     );
-    values.gambar.forEach((file, index) => {
-      formData.append("gambar", file);
-    });
+    if (values.gambar && values.gambar.length > 0) {
+      values.gambar.forEach((file, index) => {
+        formData.append("gambar", file);
+      });
+    }
+    if (formMode === "create" && values.gambar && values.gambar.length === 0) {
+      toast.error("Gambar harus diisi");
+      return;
+    }
+    
+    formData.append("deletedImageIds", JSON.stringify(deletedImageIds));
+
     try {
       const url = `http://localhost:3000/api/wisata${formMode === "update" ? `?id=${editingWisata?.id}` : ""}`;
       const method = formMode === "update" ? "PUT" : "POST";
       toast.promise(axios({ url, method, data: formData }), {
         loading: `Sedang ${formMode === "update" ? "memperbarui" : "membuat"} Wisata...`,
-        success: `Wisata berhasil ${formMode === "update" ? "diperbarui" : "dibuat"}`,
+        success: () => {
+          refreshData();
+          return `Wisata berhasil ${formMode === "update" ? "diperbarui" : "dibuat"}`;
+        },
         error: `Gagal ${formMode === "update" ? "memperbarui" : "membuat"} Wisata`,
       });
       setLoading(false);
       closeDialog();
+      form.reset();
     } catch (error) {
       toast.error(
         `Gagal ${formMode === "update" ? "memperbarui" : "membuat"} Wisata`
@@ -156,7 +169,9 @@ export function WisataDesaForm() {
     >
       <DialogContent className="sm:max-w-[1200px] h-[600px]">
         <DialogHeader>
-          <DialogTitle>Tambah Wisata Baru</DialogTitle>
+          <DialogTitle>
+            {formMode === "update" ? "Edit Wisata" : "Tambah Wisata Baru"}
+          </DialogTitle>
           <DialogDescription>
             Isi form berikut untuk menambahkan wisata baru ke dalam sistem.
           </DialogDescription>

@@ -4,7 +4,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Loader2 } from "lucide-react";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -68,11 +74,12 @@ const formSchema = z.object({
     })
     .optional()
     .or(z.literal("")),
-  gambar: z.array(z.instanceof(File)),
+  gambar: z.array(z.instanceof(File)).optional(),
 });
 
-export function UMKMForm() {
-  const { isDialogOpen, formMode, editingUMKM, closeDialog, setEditingUMKM } = useUMKMStore();
+export function UMKMForm({ refreshData }: { refreshData: () => void }) {
+  const { isDialogOpen, formMode, editingUMKM, closeDialog, setEditingUMKM } =
+    useUMKMStore();
   const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
   const [deletedImageIds, setDeletedImageIds] = useState<string[]>([]);
@@ -91,11 +98,11 @@ export function UMKMForm() {
   });
   const { mutate } = useSWRConfig();
   const handleImageDelete = (imageId: string) => {
-    setDeletedImageIds(prev => [...prev, imageId]);
+    setDeletedImageIds((prev) => [...prev, imageId]);
     if (editingUMKM && editingUMKM.GambarUMKM) {
       setEditingUMKM({
         ...editingUMKM,
-        GambarUMKM: editingUMKM.GambarUMKM.filter(img => img.id !== imageId)
+        GambarUMKM: editingUMKM.GambarUMKM.filter((img) => img.id !== imageId),
       });
     }
   };
@@ -118,12 +125,13 @@ export function UMKMForm() {
         website: values.website,
       })
     );
+    if (values.gambar && values.gambar.length > 0) {
+      values.gambar.forEach((file, index) => {
+        formData.append("gambar", file);
+      });
+    }
 
-    values.gambar.forEach((file, index) => {
-      formData.append("gambar", file);
-    });
-
-    formData.append('deletedImageIds', JSON.stringify(deletedImageIds));
+    formData.append("deletedImageIds", JSON.stringify(deletedImageIds));
 
     try {
       const url = `http://localhost:3000/api/umkm${formMode === "update" ? `?id=${editingUMKM?.id}` : ""}`;
@@ -140,13 +148,17 @@ export function UMKMForm() {
         }),
         {
           loading: `Sedang ${formMode === "update" ? "memperbarui" : "membuat"} UMKM...`,
-          success: `UMKM berhasil ${formMode === "update" ? "diperbarui" : "dibuat"}`,
+          success: () => {
+            refreshData();
+            return `UMKM berhasil ${formMode === "update" ? "diperbarui" : "dibuat"}`;
+          },
           error: `Gagal ${formMode === "update" ? "memperbarui" : "membuat"} UMKM`,
         }
       );
       setLoading(false);
       closeDialog();
       mutate("/umkm");
+      form.reset();
     } catch (error: AxiosError | any) {
       toast.error(
         `Gagal ${formMode === "update" ? "memperbarui" : "membuat"} UMKM`
