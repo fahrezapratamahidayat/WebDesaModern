@@ -1,7 +1,7 @@
 import { GambarWisataGaleri, WisataDesa } from '@prisma/client'
 import { create } from 'zustand'
 
-interface WisataDesaWithGambar extends WisataDesa {
+export interface WisataDesaWithGambar extends WisataDesa {
     GambarWisataGaleri: GambarWisataGaleri[];
 }
 
