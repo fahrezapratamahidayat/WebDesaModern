@@ -7,18 +7,26 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
-import { ChevronRight, Calendar, User, Filter, BookOpen, Loader2 } from "lucide-react";
+import { Button, buttonVariants } from "../ui/button";
+import {
+  ChevronRight,
+  Calendar,
+  User,
+  Filter,
+  BookOpen,
+  Loader2,
+} from "lucide-react";
 import axios from "axios";
 import useSWR from "swr";
 import { format, parseISO } from "date-fns";
 import { id } from "date-fns/locale";
+import Link from "next/link";
 
 interface Penulis {
   id: number;
   nama: string;
 }
-
+type StatusArtikel = "Draft" | "Publikasi" | "Arsip";
 interface Artikel {
   id: number;
   createdAt: string;
@@ -29,6 +37,10 @@ interface Artikel {
   penulisId: number;
   ringkasan: string;
   penulis: Penulis;
+  urlArtikel: string;
+  slug: string;
+  error?: string;
+  status: StatusArtikel;
 }
 
 export default function ArtikelDesaSection() {
@@ -57,7 +69,10 @@ export default function ArtikelDesaSection() {
     );
 
   return (
-    <section id="artikel" className="scroll-mt-[2rem] flex flex-col lg:px-32 px-6 gap-6 mt-96 lg:mt-32">
+    <section
+      id="artikel"
+      className="scroll-mt-[2rem] flex flex-col lg:px-32 px-6 gap-6 mt-96 lg:mt-32"
+    >
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold tracking-tight">
           Artikel Desa Karyamekar
@@ -106,9 +121,12 @@ export default function ArtikelDesaSection() {
                   <User className="w-4 h-4 mr-1" />
                   <span>{artikel.penulis.nama}</span>
                 </div>
-                <Button variant="ghost" className="text-primary">
+                <Link
+                  href={`/artikel/${artikel.slug}`}
+                  className={buttonVariants({ variant: "outline" })}
+                >
                   Baca Selengkapnya <ChevronRight className="w-4 h-4 ml-1" />
-                </Button>
+                </Link>
               </CardFooter>
             </Card>
           ))}
