@@ -6,7 +6,7 @@ import { Role } from "@prisma/client";
 export default function PageKegiatan() {
   return (
     <RoleGate allowedRole={Role.Admin}>
-      <AdminArtikelPage />
+      <AdminKegiatanPage />
     </RoleGate>
   );
 }
