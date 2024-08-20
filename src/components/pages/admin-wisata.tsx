@@ -15,6 +15,9 @@ export default function AdminWisataPage() {
     return response.data.data;
   };
 
+  const refreshData = () => {
+    mutate("/wisata");
+  };
   const { data, error, isLoading } = useSWR("/wisata", fetcher);
   if (error) return <div>failed to load</div>;
   if (isLoading)
@@ -32,7 +35,7 @@ export default function AdminWisataPage() {
     );
   return (
     <AdminLayout>
-        <TableWisata data={data} columns={columns} />
+        <TableWisata data={data} columns={columns} refreshData={refreshData} />
     </AdminLayout>
   );
 }
