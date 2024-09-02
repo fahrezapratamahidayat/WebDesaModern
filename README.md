@@ -24,8 +24,8 @@ Website Desa adalah platform digital yang dirancang untuk menyediakan informasi 
 
 1. Clone repositori ini:
    ```bash
-   git clone https://github.com/username/website-desa.git
-   cd website-desa
+   git@github.com:fahrezapratamahidayat/WebDesaModern.git
+   cd WebDesaModern
    ```
 
 2. Install dependensi:
