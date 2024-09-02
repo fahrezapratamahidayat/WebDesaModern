@@ -6,7 +6,7 @@ Website Desa adalah platform digital yang dirancang untuk menyediakan informasi 
 
 ### 🎯 Fitur Utama
 
-- **Profil Desa**: Menampilkan sejarah, visi dan misi, serta informasi tentang pemerintahan desa.
+- **Profil Desa**: informasi tentang pemerintahan desa.
 - **Wisata Desa**: Informasi lengkap mengenai objek wisata lokal, atraksi budaya, dan pemandangan alam.
 - **Galeri Desa**: Koleksi foto dan video tentang kehidupan desa dan keindahan alam.
 - **Kegiatan Desa**: Jadwal dan detail kegiatan serta acara desa.
