@@ -22,7 +22,7 @@ interface WisataDesaCardProps {
   GambarWisataGaleri: {
     id: string;
     wisataDesaId: string;
-    url: string;
+    blob: string;
     keterangan?: string;
     createdAt: Date;
   }[];
@@ -152,7 +152,7 @@ export default function WisataDesaCard({
               className="w-full h-[500px]"
             >
               <Image
-                src={`http://localhost:3000${image.url}`}
+                src={`data:image/jpeg;base64,${image.blob}`}
                 alt={image.keterangan || `gambar${index + 1}`}
                 className="object-cover w-full h-full rounded-md"
                 height={800}
