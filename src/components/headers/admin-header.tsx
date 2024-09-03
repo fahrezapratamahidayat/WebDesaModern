@@ -53,18 +53,7 @@ export default function Header() {
   return (
     <AnimatePresence mode="wait">
       <motion.header
-        initial={{
-          opacity: 1,
-          y: -100,
-        }}
-        animate={{
-          y: visible ? 0 : -100,
-          opacity: visible ? 1 : 0,
-        }}
-        transition={{
-          duration: 0.2,
-        }}
-        className={`bg-black sticky top-0 z-30 flex h-14 items-center gap-4 border-b border-border`}
+        className={`bg-white border border-b border-border sticky top-0 z-30 flex h-14 items-center gap-4`}
       >
         <div className="flex items-center justify-between w-full lg:mx-32 mx-6">
           <Link href={"#beranda"} className="text-base text-balance font-bold">
@@ -75,7 +64,7 @@ export default function Header() {
               <Link
                 key={href}
                 href={href}
-                className={`text-sm hover:text-primary transition-all duration-300 ${
+                className={`text-sm font-semibold hover:text-primary transition-all duration-300 ${
                   activeSection === href.slice(1)
                     ? "text-primary"
                     : "text-muted-foreground"
