@@ -1,7 +1,7 @@
 "use client";
 import axios from "axios";
 import AdminLayout from "../layouts/admin-layout";
-import useSWR from "swr";
+import useSWR, { useSWRConfig } from "swr";
 import SidebarSkeleton from "../skeletons/sidebar";
 import { Card, CardContent } from "../ui/card";
 import TableArtikelSkeleton from "../skeletons/table";
@@ -9,6 +9,11 @@ import TableGambarGaleri, { columns } from "../tables/table-galeri";
 
 export default function AdminGaleriPage() {
   const fetcher = (url: string) => axios.get(url).then((res) => res.data.data);
+  const { mutate } = useSWRConfig();
+
+  const refreshData = () => {
+    mutate("/galeri");
+  };
 
   const { data, error } = useSWR("/api/galeri", fetcher);
 
@@ -29,7 +34,7 @@ export default function AdminGaleriPage() {
 
   return (
     <AdminLayout>
-      <TableGambarGaleri data={data} columns={columns} />
+      <TableGambarGaleri data={data} columns={columns} refreshData={refreshData} />
     </AdminLayout>
   );
 }
