@@ -68,12 +68,12 @@ export default function GallerySection() {
               <div key={item.id} className="w-full h-full">
                 <Image
                   className="h-full object-cover max-w-full rounded-lg cursor-pointer hover:scale-105 transition-all duration-300"
-                  src={`http://localhost:3000${item.url}`}
+                  src={`data:image/jpeg;base64,${item.blob}`}
                   alt={item.keterangan}
                   width={500}
                   height={500}
                   onClick={() =>
-                    handleImageModal(`http://localhost:3000${item.url}`)
+                    handleImageModal(`data:image/jpeg;base64,${item.blob}`)
                   }
                 />
               </div>
