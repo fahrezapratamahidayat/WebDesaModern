@@ -6,9 +6,10 @@ import { toast } from "sonner";
 
 interface UploadedFilesCardProps {
   uploadedFiles: Array<{
+    id: string;
     key: string;
-    url: string;
-    name: string;
+    blob: Buffer;
+    keterangan: string | null;
   }>;
   onDelete: (key: string) => void;
 }
@@ -30,8 +31,8 @@ export function UploadedFilesCard({ uploadedFiles, onDelete }: UploadedFilesCard
             {uploadedFiles.map((file) => (
               <div key={file.key} className="relative aspect-video w-64">
                 <Image
-                  src={file.url}
-                  alt={file.name}
+                  src={`data:image/png;base64,${file.blob}`}
+                  alt={file.keterangan || `Gambar ${file.key}`}
                   fill
                   sizes="(min-width: 640px) 640px, 100vw"
                   loading="lazy"
@@ -41,7 +42,7 @@ export function UploadedFilesCard({ uploadedFiles, onDelete }: UploadedFilesCard
                   variant="destructive"
                   size="icon"
                   className="absolute top-2 right-2"
-                  onClick={() => handleDelete(file.key)}
+                  onClick={() => handleDelete(file.key.toString())}
                   disabled={uploadedFiles.length <= 1}
                 >
                   <X className="h-4 w-4" />
