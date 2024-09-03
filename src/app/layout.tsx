@@ -49,12 +49,12 @@ export default function RootLayout({
           />
           <ThemeProvider
             attribute="class"
-            defaultTheme="dark"
+            defaultTheme="light"
             enableSystem
             disableTransitionOnChange={false}
           >
             {children}
-            <Toaster />
+            <Toaster position="top-center" />
           </ThemeProvider>
         </SessionProvider>
       </body>
