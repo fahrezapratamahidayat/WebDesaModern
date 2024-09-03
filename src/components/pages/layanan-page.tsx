@@ -37,9 +37,9 @@ export default function LayananDesaSection() {
           Berikut adalah beberapa layanan utama yang dapat kami berikan.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 justify-center place-content-center items-center place-items-center gap-6">
+        <div className="flex items-center justify-center gap-6 w-full h-full lg:flex-row flex-col ">
           {layananDesa.map((layanan, index) => (
-            <Card key={index} className="flex flex-col">
+            <Card key={index} className="flex flex-col hover:scale-105 transition-all duration-300 hover:shadow-lg">
               <CardHeader>
                 <div className="mb-4 flex justify-center">{layanan.icon}</div>
                 <CardTitle className="text-xl text-center mb-2">
