@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+---
 
-## Getting Started
+## 🌾 Website Desa
 
-First, run the development server:
+Website Desa adalah platform digital yang dirancang untuk menyediakan informasi lengkap dan menarik tentang desa, termasuk profil desa, destinasi wisata, galeri foto, kegiatan masyarakat, artikel terkini, UMKM lokal, dan informasi kontak. Website ini dibuat untuk memperkuat keterlibatan masyarakat dan memudahkan akses informasi bagi penduduk maupun pengunjung desa.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### 🎯 Fitur Utama
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Profil Desa**: informasi tentang pemerintahan desa.
+- **Wisata Desa**: Informasi lengkap mengenai objek wisata lokal, atraksi budaya, dan pemandangan alam.
+- **Galeri Desa**: Koleksi foto dan video tentang kehidupan desa dan keindahan alam.
+- **Kegiatan Desa**: Jadwal dan detail kegiatan serta acara desa.
+- **Artikel Desa**: Artikel dan berita terkini mengenai perkembangan dan kegiatan desa.
+- **UMKM Desa**: Informasi mengenai usaha mikro, kecil, dan menengah di desa beserta produk atau jasa yang ditawarkan.
+- **Kontak Desa**: Informasi kontak dan formulir untuk memudahkan komunikasi dengan perangkat desa.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 🚀 Teknologi yang Digunakan
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- **Frontend**: Dibangun dengan **Next.js** dan **React** untuk performa yang optimal dan pengalaman pengguna yang responsif.
+- **ORM**: Menggunakan **Prisma ORM** untuk interaksi yang mudah dan aman dengan database.
+- **Database**: **MySQL** digunakan sebagai basis data untuk menyimpan informasi dinamis terkait desa.
+  
+### 📦 Cara Instalasi
 
-## Learn More
+1. Clone repositori ini:
+   ```bash
+   git clone https://github.com/fahrezapratamahidayat/WebDesaModern.git
+   cd WebDesaModern
+   ```
 
-To learn more about Next.js, take a look at the following resources:
+2. Install dependensi:
+   ```bash
+   npm install
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+3. Setup database dengan Prisma:
+   ```bash
+   npx prisma migrate dev --name init
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+4. Jalankan aplikasi:
+   ```bash
+   npm run dev
+   ```
 
-## Deploy on Vercel
+### 🎉 Kontribusi
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Kami mengundang siapa saja yang ingin berkontribusi untuk mengembangkan website ini lebih lanjut. Silakan buat pull request atau laporkan issue jika menemukan bug atau memiliki ide perbaikan.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+### 📞 Kontak
+
+Jika ada pertanyaan atau membutuhkan informasi lebih lanjut, silakan hubungi kami di [email@example.com](mailto:email@example.com).
+
+---
+
+Semoga deskripsi ini membuat proyek website desa kamu menarik di GitHub! Jika ada tambahan atau perubahan yang diinginkan, silakan beri tahu saya!
