@@ -24,7 +24,7 @@ interface UMKMCardProps {
   GambarUMKM: {
     id: string;
     umkmId: string;
-    url: string;
+    blob: Buffer;
     keterangan: string;
     createdAt: Date;
   }[];
@@ -188,8 +188,8 @@ export default function UMKMCard({
               className="w-full h-[500px]"
             >
               <Image
-                src={`http://localhost:3000${image.url}`} // Perbaikan di sini
-                alt={`gambar${index + 1}`}
+                src={`data:image/png;base64,${image.blob}`}
+                alt={`${image.keterangan}`}
                 className="object-cover w-full h-full rounded-md"
                 height={800}
                 width={800}
