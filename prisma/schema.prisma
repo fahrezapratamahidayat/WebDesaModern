@@ -91,14 +91,14 @@ model GambarUMKM {
   id         String   @id @default(uuid())
   umkm       UMKM     @relation(fields: [umkmId], references: [id])
   umkmId     String
-  url        String
+  blob       Bytes
   keterangan String?
   createdAt  DateTime @default(now())
 }
 
 model GambarGaleri {
   id         String   @id @default(uuid())
-  url        String
+  blob       Bytes
   keterangan String
   createdAt  DateTime @default(now())
 }
@@ -121,7 +121,7 @@ model GambarWisataGaleri {
   id           String     @id @default(uuid())
   wisataDesa   WisataDesa @relation(fields: [wisataDesaId], references: [id])
   wisataDesaId String
-  url          String
+  blob       Bytes
   keterangan   String?
   createdAt    DateTime   @default(now())
 }
