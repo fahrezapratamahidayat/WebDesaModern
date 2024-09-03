@@ -11,7 +11,19 @@ export async function getWisata() {
         GambarWisataGaleri: true,
       },
     });
-    return { data, message: "Wisata berhasil ditemukan." };
+    if (data.length === 0) {
+      return { data: [], message: "Tidak ada wisata yang ditemukan." };
+    }
+
+    const dataWithBase64Images = data.map((wisata) => ({
+      ...wisata,
+      GambarWisataGaleri: wisata.GambarWisataGaleri.map((gambar) => ({
+        ...gambar,
+        blob: gambar.blob.toString("base64"),
+      })),
+    }));
+
+    return { data: dataWithBase64Images, message: "Wisata berhasil ditemukan." };
   } catch (error) {
     return { data: [], message: "Tidak ada wisata yang ditemukan." };
   }
@@ -36,7 +48,7 @@ export async function getWIsataById(id: string) {
 
 export const createWisata = async (
   data: Omit<WisataDesa, "id" | "createdAt" | "updatedAt">,
-  GambarWisataGaleri?: { url: string; keterangan?: string }[]
+  GambarWisataGaleri?: { blob: Buffer; keterangan?: string }[]
 ): Promise<WisataDesa> => {
   try {
     const newWisata = await prisma.wisataDesa.create({
@@ -79,30 +91,10 @@ export const deleteWisata = async (id: string) => {
 export const updateWisata = async (
   id: string,
   data: any,
-  newFiles: File[],
+  newFiles: { blob: Buffer; keterangan?: string }[],
   deletedImageIds: string[]
 ) => {
   try {
-    const uploadDir = path.join(process.cwd(), "public", "uploads", "wisata");
-    await mkdir(uploadDir, { recursive: true });
-
-    const newGambarWisata = await Promise.all(
-      newFiles.map(async (file) => {
-        const bytes = await file.arrayBuffer();
-        const buffer = Buffer.from(bytes);
-
-        const fileName = `${Date.now()}-${file.name.replace(/\s/g, "_")}`;
-        const filePath = path.join(uploadDir, fileName);
-
-        await writeFile(filePath, buffer);
-
-        return {
-          url: `/uploads/wisata/${fileName}`,
-          keterangan: `New Image`,
-        };
-      })
-    );
-
     if (deletedImageIds.length > 0) {
       await prisma.gambarWisataGaleri.deleteMany({
         where: {
@@ -110,16 +102,6 @@ export const updateWisata = async (
           wisataDesaId: id,
         },
       });
-
-      for (const imageId of deletedImageIds) {
-        const image = await prisma.gambarWisataGaleri.findUnique({
-          where: { id: imageId },
-        });
-        if (image) {
-          const filePath = path.join(process.cwd(), "public", image.url);
-          await unlink(filePath);
-        }
-      }
     }
 
     const updatedWisata = await prisma.wisataDesa.update({
@@ -127,7 +109,7 @@ export const updateWisata = async (
       data: {
         ...data,
         GambarWisataGaleri: {
-          create: newGambarWisata,
+          create: newFiles,
         },
       },
       include: {

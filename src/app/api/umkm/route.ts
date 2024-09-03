@@ -15,22 +15,13 @@ export async function POST(req: NextRequest) {
         if (!files || files.length === 0) {
             return NextResponse.json({ error: "No files were uploaded." }, { status: 400 });
         }
-
-        const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'umkm');
-        await mkdir(uploadDir, { recursive: true });
-
         const gambarUMKM = await Promise.all(files.map(async (file, index) => {
             const bytes = await file.arrayBuffer();
             const buffer = Buffer.from(bytes);
 
-            const fileName = `${Date.now()}-${file.name.replace(/\s/g, '_')}`;
-            const filePath = path.join(uploadDir, fileName);
-
-            await writeFile(filePath, buffer);
-
             return {
-                url: `/uploads/umkm/${fileName}`,
-                keterangan: `Image ${index + 1}`,
+                blob: buffer,
+                keterangan: umkmData.keterangan || `Image ${index + 1}`,
             };
         }));
 
@@ -70,9 +61,18 @@ export async function PUT(req: NextRequest) {
         const formData = await req.formData();
         const umkmData = JSON.parse(formData.get('umkmData') as string);
         const files = formData.getAll('gambar') as File[];
+        const gambarUMKM = await Promise.all(files.map(async (file, index) => {
+            const bytes = await file.arrayBuffer();
+            const buffer = Buffer.from(bytes);
+
+            return {
+                blob: buffer,
+                keterangan: umkmData.keterangan || `Image ${index + 1}`,
+            };
+        }));
         const deletedImageIds = JSON.parse(formData.get('deletedImageIds') as string || '[]');
 
-        const data = await updateUMKM(id, umkmData, files, deletedImageIds);
+        const data = await updateUMKM(id, umkmData, gambarUMKM, deletedImageIds);
         return NextResponse.json(data);
     } catch (error) {
         console.error("Error handling PUT request:", error);
