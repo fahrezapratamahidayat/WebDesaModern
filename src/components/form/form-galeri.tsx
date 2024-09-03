@@ -1,9 +1,9 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Loader2, Plus } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -21,20 +21,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import axios, { AxiosError } from "axios";
 import { FileUploader } from "../ui/file-uploader";
 import { ScrollArea, ScrollBar } from "../ui/scroll-area";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { useSWRConfig } from "swr";
+import { useGaleriStore } from "@/hooks/use-galeri-store";
+import Image from "next/image";
 
 const formSchema = z.object({
   keterangan: z.string().min(10, {
@@ -43,10 +36,17 @@ const formSchema = z.object({
   gambar: z.array(z.instanceof(File)),
 });
 
-export function GaleriForm() {
-  const [open, setOpen] = useState(false);
+export function GaleriForm({ refreshData }: { refreshData: () => void }) {
   const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState(false);
+
+  const {
+    isDialogOpen,
+    formMode,
+    editingGaleri,
+    closeDialog,
+  } = useGaleriStore();
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -54,11 +54,9 @@ export function GaleriForm() {
       gambar: [],
     },
   });
-  const { mutate } = useSWRConfig();
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const formData = new FormData();
-    console.log(values);
 
     formData.append(
       "galeri",
@@ -71,9 +69,15 @@ export function GaleriForm() {
       formData.append("gambar", file);
     });
 
+    if (formMode === "create" && values.gambar && values.gambar.length === 0) {
+      toast.error("Gambar harus diisi");
+      return;
+    }
+
     try {
-      const url = "http://localhost:3000/api/galeri";
-      const method = "POST";
+      const url = `http://localhost:3000/api/galeri${formMode === "update" ? `?id=${editingGaleri?.id}` : ""}`;
+      const method = formMode === "update" ? "PUT" : "POST";
+
       toast.promise(
         axios({
           url,
@@ -84,34 +88,54 @@ export function GaleriForm() {
           },
         }),
         {
-          loading: "Loading",
-          success: "Berhasil",
-          error: "gagal dibuat",
+          loading: `Sedang ${formMode === "update" ? "memperbarui" : "membuat"} Galeri...`,
+          success: () => {
+            refreshData();
+            return `Galeri berhasil ${formMode === "update" ? "diperbarui" : "dibuat"}`;
+          },
+          error: `Gagal ${formMode === "update" ? "memperbarui" : "membuat"} Galeri`,
         }
       );
       setLoading(false);
+      closeDialog();
       form.reset();
-      mutate("/api/galeri");
-      setOpen(false);
+      refreshData();
     } catch (error: AxiosError | any) {
-      toast.error(`Gagal ${error.response?.data.message || error.message}`);
+      toast.error(
+        `Gagal ${formMode === "update" ? "memperbarui" : "membuat"} Galeri`
+      );
       setLoading(false);
     }
   }
 
+  useEffect(() => {
+    if (editingGaleri) {
+      Object.keys(editingGaleri).forEach((key) => {
+        form.setValue(
+          key as any,
+          editingGaleri[key as keyof typeof editingGaleri]
+        );
+      });
+    }
+    if (formMode === "create") {
+      form.reset();
+    }
+  }, [editingGaleri, form, formMode]);
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className=" font-medium">
-          <Plus className="mr-2 h-4 w-4 " />
-          Tambah Galeri Desa
-        </Button>
-      </DialogTrigger>
+    <Dialog
+      open={formMode !== "delete" && isDialogOpen}
+      onOpenChange={closeDialog}
+    >
       <DialogContent className="sm:max-w-[1200px] h-[600px]">
         <DialogHeader>
-          <DialogTitle>Tambah Galeri Desa Baru</DialogTitle>
+          <DialogTitle>
+            {formMode === "update" ? "Edit Galeri" : "Tambah Galeri Baru"}
+          </DialogTitle>
           <DialogDescription>
-            Isi formulir di bawah ini untuk menambahkan Galeri Desa baru.
+            Isi formulir di bawah ini untuk{" "}
+            {formMode === "update" ? "mengedit" : "menambahkan"} Galeri Desa{" "}
+            {formMode === "update" ? "" : "baru"}
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -123,7 +147,9 @@ export function GaleriForm() {
                     control={form.control}
                     name="gambar"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem
+                        className={`${formMode === "update" ? "hidden" : ""}`}
+                      >
                         <FormLabel>Gambar Galeri Desa</FormLabel>
                         <FormControl>
                           <div className="space-y-4">
@@ -144,6 +170,13 @@ export function GaleriForm() {
                       </FormItem>
                     )}
                   />
+                  <div className={`${formMode === "update" ? "space-y-4" : "hidden"}`}>
+                    <div className="relative flex flex-col gap-6 overflow-hidden">
+                      <div className="group relative grid h-72 w-full place-items-center rounded-lg px-5 py-2.5 text-center transition ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                      <Image src={`data:image/png;base64,${editingGaleri?.blob}`} alt="gambar galeri" width={100} height={100} className="w-full h-full object-cover" />
+                      </div>
+                    </div>
+                  </div>
                   <FormField
                     control={form.control}
                     name="keterangan"
@@ -169,7 +202,7 @@ export function GaleriForm() {
                 </Button>
               ) : (
                 <Button type="submit" className="w-full ">
-                  Tambah UMKM
+                  {formMode === "update" ? "Update" : "Tambah"} Galeri
                 </Button>
               )}
             </form>
