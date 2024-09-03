@@ -381,10 +381,11 @@ export function UMKMForm({ refreshData }: { refreshData: () => void }) {
                   {formMode === "update" && editingUMKM && (
                     <UploadedFilesCard
                       uploadedFiles={editingUMKM.GambarUMKM?.map(
-                        (img: { id: string; url: string }) => ({
+                        (img: { id: string; umkmId: string; blob: Buffer; keterangan: string | null; createdAt: Date; }) => ({
+                          id: img.id,
                           key: img.id,
-                          url: `http://localhost:3000${img.url}`,
-                          name: img.id,
+                          blob: img.blob,
+                          keterangan: img.keterangan || '',
                         })
                       )}
                       onDelete={handleImageDelete}

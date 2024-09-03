@@ -162,6 +162,8 @@ export function WisataDesaForm({ refreshData }: { refreshData: () => void }) {
       form.reset();
     }
   }, [editingWisata, form, formMode]);
+
+  
   return (
     <Dialog
       open={formMode !== "delete" && isDialogOpen}
@@ -307,10 +309,11 @@ export function WisataDesaForm({ refreshData }: { refreshData: () => void }) {
                 {formMode === "update" && editingWisata && (
                   <UploadedFilesCard
                     uploadedFiles={editingWisata.GambarWisataGaleri.map(
-                      (img: { id: string; url: string }) => ({
+                      (img: { id: string; wisataDesaId: string; blob: Buffer; keterangan: string | null; createdAt: Date; }) => ({
+                        id: img.id,
                         key: img.id,
-                        url: `http://localhost:3000${img.url}`,
-                        name: img.id,
+                        blob: img.blob,
+                        keterangan: img.keterangan || '',
                       })
                     )}
                     onDelete={handleImageDelete}
