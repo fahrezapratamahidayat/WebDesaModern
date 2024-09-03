@@ -68,7 +68,7 @@ export const columns: ColumnDef<WisataDesaWithGambar>[] = [
     accessorKey: "lokasi",
     header: ({ column }) => <div className="">Lokasi</div>,
     cell: ({ row }) => {
-      return <Badge variant="outline">{row.getValue("lokasi")}</Badge>;
+      return <div className="font-medium">{row.getValue("lokasi")}</div>;
     },
   },
   {
