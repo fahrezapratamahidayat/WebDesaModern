@@ -4,12 +4,13 @@ import React, { useState } from "react";
 import {
   ArrowUpDown,
   ChevronDown,
+  Copy,
   Edit2,
   EyeIcon,
   MoreHorizontal,
+  Plus,
   Trash2,
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -46,33 +47,34 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useToast } from "@/components/ui/use-toast";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { GaleriForm } from "../form/form-galeri";
+import Image from "next/image";
+import { toast } from "sonner";
+import { useGaleriStore } from "@/hooks/use-galeri-store";
+import FormDelete from "../form/form-delete";
 
 type GambarGaleri = {
   id: string;
-  url: string;
+  blob: Buffer;
   keterangan: string;
   createdAt: Date;
 };
 
 export const columns: ColumnDef<GambarGaleri>[] = [
   {
-    accessorKey: "url",
-    header: "URL Gambar",
+    accessorKey: "gambar",
+    header: "Gambar",
     cell: ({ row }) => {
       return (
         <div className="font-medium">
-          <a
-            href={row.getValue("url")}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-500 hover:text-blue-700 transition-colors duration-300"
-          >
-            {row.getValue("url")}
-          </a>
+          <Image
+            src={`data:image/png;base64,${row.original.blob}`}
+            alt="Gambar Galeri"
+            width={100}
+            height={100}
+          />
         </div>
       );
     },
@@ -116,7 +118,10 @@ export const columns: ColumnDef<GambarGaleri>[] = [
     accessorKey: "actions",
     header: "Actions",
     cell: ({ row }) => {
-      const gambar = row.original;
+      const galeri = row.original;
+      const { openDeleteDialog, seteditingGaleri } =
+        // eslint-disable-next-line react-hooks/rules-of-hooks
+        useGaleriStore();
       return (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -128,19 +133,36 @@ export const columns: ColumnDef<GambarGaleri>[] = [
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Actions</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(gambar.url)}
+              onClick={async () => {
+                try {
+                  const response = await fetch(
+                    `data:image/png;base64,${galeri.blob}`
+                  );
+                  const blob = await response.blob();
+                  await navigator.clipboard.write([
+                    new ClipboardItem({
+                      [blob.type]: blob,
+                    }),
+                  ]);
+                  toast.success("Gambar berhasil disalin ke clipboard!");
+                } catch (error) {
+                  console.error("Gagal menyalin gambar:", error);
+                  toast.error("Gagal menyalin gambar. Silakan coba lagi.");
+                }
+              }}
             >
-              Copy URL gambar
+              <Copy className="mr-2 h-4 w-4" />
+              Salin Gambar
             </DropdownMenuItem>
             <DropdownMenuItem>
               <EyeIcon className="mr-2 h-4 w-4" />
               Lihat gambar
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => seteditingGaleri(galeri)}>
               <Edit2 className="mr-2 h-4 w-4" />
               Edit keterangan
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem onSelect={() => openDeleteDialog(galeri)}>
               <Trash2 className="mr-2 h-4 w-4" />
               Hapus gambar
             </DropdownMenuItem>
@@ -154,16 +176,19 @@ export const columns: ColumnDef<GambarGaleri>[] = [
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  refreshData: () => void;
 }
 
 export default function TableGambarGaleri<TData extends GambarGaleri, TValue>({
   data,
   columns,
+  refreshData,
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
+  const { openCreateDialog, isDialogOpen, deletingGaleri, closeDialog, formMode } = useGaleriStore();
 
   const table = useReactTable({
     data,
@@ -186,6 +211,7 @@ export default function TableGambarGaleri<TData extends GambarGaleri, TValue>({
 
   return (
     <>
+      <GaleriForm refreshData={refreshData} />
       <Card>
         <CardHeader>
           <CardTitle>Galeri Gambar</CardTitle>
@@ -235,7 +261,10 @@ export default function TableGambarGaleri<TData extends GambarGaleri, TValue>({
               </DropdownMenuContent>
             </DropdownMenu>
             <div className="flex items-center">
-              <GaleriForm />
+              <Button onClick={openCreateDialog} className=" font-medium">
+                <Plus className="mr-2 h-4 w-4 " />
+                Tambah Galeri
+              </Button>
             </div>
           </div>
           <Table>
@@ -288,10 +317,21 @@ export default function TableGambarGaleri<TData extends GambarGaleri, TValue>({
           </Table>
         </CardContent>
       </Card>
+      <FormDelete
+        isOpen={formMode === "delete" && isDialogOpen}
+        onClose={closeDialog}
+        itemToDelete={{
+          id: deletingGaleri?.id || "",
+          name: deletingGaleri?.keterangan || "",
+        }}
+        entityName="Galeri"
+        apiEndpoint="/galeri"
+        refreshData={refreshData}
+      />
       <div className="flex justify-end items-center py-4 space-x-2">
         <div className="flex-1 text-sm text-muted-foreground">
           Menampilkan <strong>{table.getFilteredRowModel().rows.length}</strong>{" "}
-          UMKM
+          Galeri
         </div>
         <div className="space-x-2">
           <Button
