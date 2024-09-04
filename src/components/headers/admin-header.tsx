@@ -1,8 +1,8 @@
 "use client";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { AlignRight } from "lucide-react";
-import { useState, useEffect } from "react";
+import { AlignRight, Moon, Sun } from "lucide-react";
+import { useState } from "react";
 import Link from "next/link";
 
 import {
@@ -11,8 +11,14 @@ import {
   motion,
   AnimatePresence,
 } from "framer-motion";
+import { useTheme } from "next-themes";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { ThemeToggle } from "../ui/theme-toggel";
+
 
 export default function Header() {
+  const { theme, setTheme } = useTheme();
   const { scrollYProgress } = useScroll();
   const [visible, setVisible] = useState(true);
   const [activeSection, setActiveSection] = useState("beranda");
@@ -50,10 +56,14 @@ export default function Header() {
     { href: "#kontak", label: "Kontak" },
   ];
 
+  const toggleTheme = () => {
+    setTheme(theme === "light" ? "dark" : "light");
+  };
+
   return (
     <AnimatePresence mode="wait">
       <motion.header
-        className={`bg-white border border-b border-border sticky top-0 z-30 flex h-14 items-center gap-4`}
+        className={` dark:bg-black bg-white border border-b border-border sticky top-0 z-30 flex h-14 items-center gap-4`}
       >
         <div className="flex items-center justify-between w-full lg:mx-32 mx-6">
           <Link href={"#beranda"} className="text-base text-balance font-bold">
@@ -73,6 +83,12 @@ export default function Header() {
                 {label}
               </Link>
             ))}
+            {/* <div className="flex items-center space-x-2">
+              <ThemeToggle
+                checked={theme === "dark"}
+                onCheckedChange={toggleTheme}
+              />
+            </div> */}
           </nav>
           <Sheet>
             <SheetTrigger asChild>
