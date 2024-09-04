@@ -13,9 +13,9 @@ export default function FooterSection() {
           <div>
             <h3 className="text-lg font-semibold mb-4">Desa Karyamekar</h3>
             <p className="text-sm text-muted-foreground">
-              Desa Karyamekar adalah desa yang terletak di Kabupaten Garut,
-              yang terus berkembang dan berkomitmen untuk kesejahteraan
-              masyarakat.
+              Desa Karyamekar adalah desa yang terletak di Kecamatan Cilawu 
+              Kabupaten Garut, yang terus berkembang dan berkomitmen untuk
+              kesejahteraan masyarakat.
             </p>
           </div>
 
