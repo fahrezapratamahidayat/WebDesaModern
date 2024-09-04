@@ -12,6 +12,8 @@ import {
   Building,
   Landmark,
 } from "lucide-react";
+import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import { BarChart, Bar, XAxis, YAxis, Tooltip } from "recharts";
 
 interface SectionProps {
   title: string;
@@ -40,6 +42,22 @@ function Section({ title, icon, children }: SectionProps) {
 }
 
 export default function ProfilLengkapSection() {
+  const distribusiUsia = [
+    { name: "0-15 tahun", total: 1796 },
+    { name: "15-65 tahun", total: 5046 },
+    { name: "65+ tahun", total: 948 },
+  ];
+
+  const pekerjaanUtama = [
+    { name: "Wiraswasta/pedagang", total: 683 },
+    { name: "Petani", total: 43 },
+    { name: "Peternak", total: 68 },
+    { name: "PNS", total: 36 },
+    { name: "Swasta", total: 37 },
+  ];
+
+  const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8"];
+
   return (
     <section className="scroll-mt-[8rem] flex flex-col lg:px-32 px-4 min-h-screen gap-8 py-10">
       <Section title="Data Umum" icon={<MapPin className="w-4 h-4 " />}>
@@ -93,15 +111,24 @@ export default function ProfilLengkapSection() {
           </div>
           <div>
             <h3 className="font-semibold mb-2">Distribusi Usia:</h3>
-            <span>
-              <Badge variant="outline">0 - 15 tahun</Badge> 1.796 Jiwa
-            </span>
-            <span>
-              <Badge variant="outline">15 - 65 tahun</Badge> 5.046 Jiwa
-            </span>
-            <span>
-              <Badge variant="outline">65+ tahun</Badge> 948 Jiwa
-            </span>
+            <ResponsiveContainer width="100%" height={200}>
+              <PieChart>
+                <Pie
+                  data={distribusiUsia}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  outerRadius={80}
+                  fill="#8884d8"
+                  dataKey="total"
+                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                >
+                  {distribusiUsia.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
           </div>
         </div>
       </Section>
@@ -113,13 +140,14 @@ export default function ProfilLengkapSection() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <h3 className="font-semibold mb-2">Pekerjaan Utama:</h3>
-            <ul className="list-disc list-inside">
-              <li>Wiraswasta/pedagang: 683 orang</li>
-              <li>Petani: 43 orang</li>
-              <li>Peternak: 68 orang</li>
-              <li>PNS: 36 orang</li>
-              <li>Swasta: 37 orang</li>
-            </ul>
+            <ResponsiveContainer width="100%" height={200}>
+              <BarChart data={pekerjaanUtama}>
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Bar dataKey="total" fill="#8884d8" />
+              </BarChart>
+            </ResponsiveContainer>
           </div>
           <div className="flex flex-col gap-1">
             <h3 className="font-semibold mb-2">Data Keuangan Desa:</h3>
