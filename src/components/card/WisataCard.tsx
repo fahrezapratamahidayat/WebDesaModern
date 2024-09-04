@@ -1,15 +1,12 @@
-"use client";
-import React from "react";
-import { ArrowRight } from "lucide-react";
-import Link from "next/link";
+"use client";;
 import { useState } from "react";
-import {
-  motion,
-  useScroll,
-  useMotionValueEvent,
-  useAnimation,
-} from "framer-motion";
+import { MapPin, Phone, Mail, Globe, Instagram, Facebook, Twitter } from "lucide-react";
+import Link from "next/link";
 import Image from "next/image";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 
 interface WisataDesaCardProps {
   nama: string;
@@ -19,6 +16,9 @@ interface WisataDesaCardProps {
   telepon: string;
   email?: string;
   website?: string;
+  instagram?: string;
+  facebook?: string;
+  twitter?: string;
   GambarWisataGaleri: {
     id: string;
     wisataDesaId: string;
@@ -36,132 +36,96 @@ export default function WisataDesaCard({
   telepon,
   email,
   website,
+  instagram,
+  facebook,
+  twitter,
   GambarWisataGaleri,
 }: WisataDesaCardProps) {
-  const { scrollYProgress, scrollY } = useScroll();
-  const controls = useAnimation();
-  const [visible, setVisible] = useState(false);
-  const [sticky, setSticky] = useState(false);
-  const [isSticky, setIsSticky] = useState(false);
-
-  useMotionValueEvent(scrollYProgress, "change", async (current) => {
-    if (current > 0.87) {
-      setVisible(true);
-      await controls.start("visible");
-    } else {
-      setVisible(false);
-      await controls.start("hidden");
-    }
-    setSticky(current > 0.9);
-    setIsSticky(current < 1.3);
-  });
-  useMotionValueEvent(scrollYProgress, "change", (current) => {});
+  const [currentImage, setCurrentImage] = useState(0);
 
   return (
-    <div
-      id={`${nama}`}
-      className="flex lg:flex-row flex-col justify-between w-full mt-20 gap-6 overflow-visible "
-    >
-      <div className="w-full lg:w-1/2">
-        <div
-          className={`flex flex-col gap-y-6 ${
-            isSticky ? "sticky top-32 z-30 transition" : ""
-          }`}
-        >
-          <div className="flex flex-col gap-6">
-            <h2 className="font-semibold text-balance tracking-tighter text-2xl">
-              {nama}
-            </h2>
-            <p className="text-sm text-muted-foreground leading-snug text-justify">
-              {deskripsi}
-            </p>
-            <div className="">
-              <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 1 * 0.2 }}
-                className="flex items-center py-4 border-b mt-6"
-              >
-                <span className="text-sm text-muted-foreground">Lokasi</span>
-                <span className="ml-auto text-sm text-balance">{lokasi}</span>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 2 * 0.2 }}
-                className="flex items-center py-4 border-b"
-              >
-                <span className="text-sm text-muted-foreground">Alamat</span>
-                <span className="ml-auto text-sm text-balance">{alamat}</span>
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: 3 * 0.2 }}
-                className="flex items-center py-4 border-b"
-              >
-                <span className="text-sm text-muted-foreground">Telepon</span>
-                <span className="ml-auto text-sm text-balance">{telepon}</span>
-              </motion.div>
+    <Card className="w-full mt-8 overflow-hidden">
+      <CardHeader>
+        <CardTitle className="text-2xl font-bold">{nama.charAt(0).toUpperCase() + nama.slice(1)}</CardTitle>
+        <Badge variant="secondary" className="mt-2">
+          {lokasi}
+        </Badge>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <Carousel className="w-full max-w-xs mx-auto">
+              <CarouselContent>
+                {GambarWisataGaleri.map((image, index) => (
+                  <CarouselItem key={image.id}>
+                    <div className="relative aspect-square">
+                      <Image
+                        src={`data:image/jpeg;base64,${image.blob}`}
+                        alt={image.keterangan || `Gambar ${index + 1}`}
+                        layout="fill"
+                        objectFit="cover"
+                        className="rounded-lg"
+                      />
+                    </div>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
+          </div>
+          <div className="space-y-4">
+            <p className="text-sm text-muted-foreground">{deskripsi}</p>
+            <div className="space-y-2">
+              <div className="flex items-center">
+                <MapPin className="w-4 h-4 mr-2" />
+                <span className="text-sm">{alamat}</span>
+              </div>
+              <div className="flex items-center">
+                <Phone className="w-4 h-4 mr-2" />
+                <span className="text-sm">{telepon}</span>
+              </div>
               {email && (
-                <motion.div
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 4 * 0.2 }}
-                  className="flex items-center py-4 border-b"
-                >
-                  <span className="text-sm text-muted-foreground">Email</span>
-                  <span className="ml-auto text-sm text-balance">{email}</span>
-                </motion.div>
+                <div className="flex items-center">
+                  <Mail className="w-4 h-4 mr-2" />
+                  <span className="text-sm">{email}</span>
+                </div>
               )}
               {website && (
-                <motion.div
-                  initial={{ opacity: 0, y: 50 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: 5 * 0.2 }}
-                  className="flex items-center py-4 border-b"
-                >
-                  <span className="text-sm text-muted-foreground">
-                    Kunjungi Situs
-                  </span>
-                  <span className="ml-auto text-sm text-balance">
-                    <Link target="_blank" href={website}>
-                      <ArrowRight className="w-4 h-4" />
-                    </Link>
-                  </span>
-                </motion.div>
+                <div className="flex items-center">
+                  <Globe className="w-4 h-4 mr-2" />
+                  <Link href={website} target="_blank" className="text-sm text-blue-500 hover:underline">
+                    {website}
+                  </Link>
+                </div>
+              )}
+            </div>
+            <div className="flex space-x-2 mt-4">
+              {instagram && (
+                <Button variant="outline" size="icon" asChild>
+                  <Link href={instagram} target="_blank">
+                    <Instagram className="w-4 h-4" />
+                  </Link>
+                </Button>
+              )}
+              {facebook && (
+                <Button variant="outline" size="icon" asChild>
+                  <Link href={facebook} target="_blank">
+                    <Facebook className="w-4 h-4" />
+                  </Link>
+                </Button>
+              )}
+              {twitter && (
+                <Button variant="outline" size="icon" asChild>
+                  <Link href={twitter} target="_blank">
+                    <Twitter className="w-4 h-4" />
+                  </Link>
+                </Button>
               )}
             </div>
           </div>
         </div>
-      </div>
-      <div className={`flex flex-col lg:w-1/2 gap-y-6`}>
-        <div className="relative flex flex-col gap-8">
-          {GambarWisataGaleri.map((image, index) => (
-            <motion.div
-              key={index}
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: (index + 1) * 0.2 }}
-              className="w-full h-[500px]"
-            >
-              <Image
-                src={`data:image/jpeg;base64,${image.blob}`}
-                alt={image.keterangan || `gambar${index + 1}`}
-                className="object-cover w-full h-full rounded-md"
-                height={800}
-                width={800}
-              />
-            </motion.div>
-          ))}
-        </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 }
